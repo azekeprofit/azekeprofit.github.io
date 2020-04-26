@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+width:300px;height:300px
+}
+table,td {border-spacing:0; border-collapse:collapse}
+td {border:black 3px solid;text-align:center }
+input {height:40px;width:40px}
+td button  { background-color: white}
+td.x1 button:nth-of-type(1) { background-color: yellow}
+td.x2 button:nth-of-type(2) { background-color: yellow}
+td.x3 button:nth-of-type(3) { background-color: yellow}
+
+td.left {border-left-color: red}
+td.up {border-top-color: red}
+td.down {border-bottom-color: red}
+td.right {border-right-color: red}
+</style>
+</head>
+<body>
+<script type="module">
+import { h, useState, render } from "https://unpkg.com/preactz@^1.0.0/index.mjs";
+const up=0, right=1, down=2, left=3;
+
+const size=4;
+
+function asc(n){return [...Array(n).keys()]; }
+function desc(n){return asc(n).reverse();}
+
+function pointIndex(x,y){return x+''+y;}
+
+
+function App(){
+const [numbers,setAllNumbers]=useState({});
+const [line,setLine]=useState('');
+
+function set(x,y,n){
+setAllNumbers({...numbers,[pointIndex(x,y)]:n});
+}
+
+function get(x,y){
+return numbers[pointIndex(x,y)];
+}
+
+function toggle(x,y,n){
+setLine('');
+if(get(x,y)==n)set(x,y,0);
+else set(x,y,n);
+}
+
+
+function makeLine(snake){
+var i=-1;
+var l=' 00';
+var x=0;var y=0;
+
+while(snake[++i]){
+if(snake[i]==left)x--;
+if(snake[i]==right)x++;
+if(snake[i]==down)y--;
+if(snake[i]==up)y++;
+
+l+=' '+x+''+y;
+}
+l+=' ';
+return l;
+}
+
+function getBorders(x,y){
+var b='';
+
+if(border(line,x,y,left))b+=' left';
+if(border(line,x,y,right))b+=' right';
+if(border(line,x,y,up))b+=' up';
+if(border(line,x,y,down))b+=' down';
+
+return b;
+}
+
+function errorInLine(line){
+
+var points=line.match(/ [\-0-9]+/g);
+var i=0;
+while(points[++i]){
+var p=points[i];
+
+if(p==' '+pointIndex(size,size))
+return checkTriangles(line)?0:i;
+
+const withinBorders=new RegExp(`[${size+1}-]`);
+
+if(withinBorders.test(p))return i;
+if(points.slice(0,i).indexOf(p)>=0)return i;
+points[i]=p;
+}
+return 0;
+}
+
+function areConnected(line, ax,ay,bx,by){
+var a=pointIndex(ax,ay);
+var b=pointIndex(bx,by);
+return line.includes(' '+a+' '+b+' ') || line.includes(' '+b+' '+a+' ');
+}
+
+function border(line, x,y,dir){
+var bx=x;
+var by=y;
+
+if(dir==left)by++;
+if(dir==right){x++;bx++;by++;}
+if(dir==down)bx++;
+if(dir==up){y++;by++;bx++}
+return areConnected(line, x,y,bx,by);
+}
+
+function checkTriangles(line){
+return desc(size).every(y=>
+asc(size).every(x=>{
+var number=get(x,y);
+if(!number)return true;
+var b=0;
+if(border(line,x,y,left))b++;
+if(border(line,x,y,right))b++;
+if(border(line,x,y,up))b++;
+if(border(line,x,y,down))b++;
+
+return number==b;
+}))}
+
+function incAt(snake,step){
+if(snake[step]==left)
+return incAt(snake,step-1);
+return snake.substring(0,step)+(parseInt(snake[step])+1)+''.padStart(snake.length-step-1,'0');
+}
+
+
+function solve() {
+var snake='000000000000000000000000000';
+var candidate=makeLine(snake);
+
+var e;
+while(e=errorInLine(candidate)){
+snake=incAt(snake,e-1);
+candidate=makeLine(snake);
+}
+
+setLine(candidate);
+}
+
+return [h('table',null,
+desc(size).map(y=>h('tr',null,
+asc(size).map(x=>h('td',{class:getBorders(x,y)+' x'+numbers[pointIndex(x,y)]},
+asc(3).map(n=>h('button',{onclick:()=>toggle(x,y,n+1)},n+1))))))),
+h('button',{onclick:solve},'Solve')];
+}
+
+render(h(App), document.body);
+</script>
+</body></html>

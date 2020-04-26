@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>The Witness Triangles puzzle solver</title>
+<style>
+table {
+width:300px;height:300px
+}
+table,td {border-spacing:0; border-collapse:collapse}
+td {border:black 3px solid;text-align:center }
+input {height:40px;width:40px}
+td button  { background-color: white}
+td.x1 button:nth-of-type(1) { background-color: yellow}
+td.x2 button:nth-of-type(2) { background-color: yellow}
+td.x3 button:nth-of-type(3) { background-color: yellow}
+
+td.left {border-left-color: red}
+td.up {border-top-color: red}
+td.down {border-bottom-color: red}
+td.right {border-right-color: red}
+</style>
+
+<script type="module">
+const up=0, right=1, down=2, left=3;
+
+
+function ascending(n){return [...Array(n).keys()]; }
+function descending(n){return ascending(n).reverse();}
+
+import { html, Component, render } from 'https://unpkg.com/htm/preact/standalone.module.js';
+
+class App extends Component {
+
+state={line:''}
+
+// type checking
+// size<10 because we do points as string with digits
+size=parseInt(this.props.size)
+
+
+// state variables access
+pointIndex(x,y){return x+''+y;}
+getNumber(x, y) {return this.state[this.pointIndex(x,y)];}
+setNumber(x, y, n) {this.setState({[this.pointIndex(x,y)]:n});}
+
+setLine(l) {this.setState({line:l});}
+
+// actions with state vars
+pressNButton(x,y,n){
+this.setLine('');
+
+if(this.getNumber(x, y)==n)this.setNumber(x,y,0);
+else this.setNumber(x,y,n);
+}
+
+makeLine(snake){
+var i=-1;
+var l=' 00';
+var x=0;var y=0;
+
+while(snake[++i]){
+if(snake[i]==left)x--;
+if(snake[i]==right)x++;
+if(snake[i]==down)y--;
+if(snake[i]==up)y++;
+
+l+=' '+x+''+y;
+}
+l+=' ';
+return l;
+}
+
+getBorders(x,y){
+var b='';
+
+var line=this.state.line;
+
+if(this.border(line,x,y,left))b+=' left';
+if(this.border(line,x,y,right))b+=' right';
+if(this.border(line,x,y,up))b+=' up';
+if(this.border(line,x,y,down))b+=' down';
+
+return b;
+}
+
+errorInLine(line){
+
+var points=line.match(/ [\-0-9]+/g);
+var i=0;
+while(points[++i]){
+var p=points[i];
+
+if(p==' '+this.pointIndex(this.size,this.size))
+return this.checkTriangles(line)?0:i;
+
+const withinBorders=new RegExp(`[${this.size+1}-]`);
+
+if(withinBorders.test(p))return i;
+if(points.slice(0,i).indexOf(p)>=0)return i;
+points[i]=p;
+}
+return 0;
+}
+
+areConnected(line, ax,ay,bx,by){
+var a=this.pointIndex(ax,ay);
+var b=this.pointIndex(bx,by);
+return line.includes(' '+a+' '+b+' ') || line.includes(' '+b+' '+a+' ');
+}
+
+border(line, x,y,dir){
+var bx=x;
+var by=y;
+
+if(dir==left)by++;
+if(dir==right){x++;bx++;by++;}
+if(dir==down)bx++;
+if(dir==up){y++;by++;bx++}
+return this.areConnected(line, x,y,bx,by);
+}
+
+checkTriangles(line){
+return descending(this.size).every(y=>
+ascending(this.size).every(x=>{
+var number=this.getNumber(x,y);
+if(!number)return true;
+var b=0;
+if(this.border(line,x,y,left))b++;
+if(this.border(line,x,y,right))b++;
+if(this.border(line,x,y,up))b++;
+if(this.border(line,x,y,down))b++;
+
+return number==b;
+}))}
+
+incAt(snake,step){
+if(snake[step]==left)
+return this.incAt(snake,step-1);
+return snake.substring(0,step)+(parseInt(snake[step])+1)+''.padStart(snake.length-step-1,'0');
+}
+
+
+solve() {
+var snake='000000000000000000000000000';
+var candidate=this.makeLine(snake);
+
+var e;
+while(e=this.errorInLine(candidate)){
+snake=this.incAt(snake,e-1);
+candidate=this.makeLine(snake);
+}
+
+this.setLine(candidate);
+}
+
+render({size}) {
+return html`
+<div class="app">
+<p>Numbers inside squares determine number of borders touched on by line that goes from bottom left to up right corner.</p>
+<table>
+${descending(this.size).map(y=>html`<tr>
+${ascending(this.size).map(x=>html`<td class='${this.getBorders(x,y)} x${this.getNumber(x,y)}'>
+${ascending(3).map(n=>html`
+<button onClick=${()=>this.pressNButton(x,y,n+1)}>${n+1}</button>
+`)}
+</td>`)}
+</tr>`)}
+</table>
+<button onClick=${() => this.solve()}>Solve</button>
+</div>`}
+}
+
+render(html`<${App} size=4 />`, document.body);
+</script>
+</html>

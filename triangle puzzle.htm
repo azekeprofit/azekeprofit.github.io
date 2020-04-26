@@ -1,0 +1,188 @@
+<html>
+<head>
+<title>The Witness Triangles puzzle solver</title>
+</head>
+<style>
+table {
+width:300px;height:300px
+}
+table,td {border-spacing:0; border-collapse:collapse}
+td {border:black 3px solid;text-align:center }
+input {height:40px;width:40px}
+td button  { background-color: white}
+td.x1 button:nth-of-type(1) { background-color: yellow}
+td.x2 button:nth-of-type(2) { background-color: yellow}
+td.x3 button:nth-of-type(3) { background-color: yellow}
+
+td.left {border-left-color: red}
+td.up {border-top-color: red}
+td.down {border-bottom-color: red}
+td.right {border-right-color: red}
+</style>
+<p>Numbers inside squares determine number of borders touched on by line that goes from bottom left to up right corner.</p>
+
+<table style="">
+<tr>
+<td><button>1</button><button>2</button><button>3</button>
+<td><button>1</button><button>2</button><button>3</button>
+<td><button>1</button><button>2</button><button>3</button>
+<td><button>1</button><button>2</button><button>3</button>
+
+<tr>
+<td><button>1</button><button>2</button><button>3</button>
+<td><button>1</button><button>2</button><button>3</button>
+<td><button>1</button><button>2</button><button>3</button>
+<td><button>1</button><button>2</button><button>3</button>
+
+<tr>
+<td><button>1</button><button>2</button><button>3</button>
+<td><button>1</button><button>2</button><button>3</button>
+<td><button>1</button><button>2</button><button>3</button>
+<td><button>1</button><button>2</button><button>3</button>
+
+<tr>
+<td><button>1</button><button>2</button><button>3</button>
+<td><button>1</button><button>2</button><button>3</button>
+<td><button>1</button><button>2</button><button>3</button>
+<td><button>1</button><button>2</button><button>3</button>
+
+</table>
+
+<script>
+
+document.querySelector('table').addEventListener('click',function(e){
+var t=e.target;
+if(t.tagName=='BUTTON'){
+var p=t.parentNode;
+var c='x'+t.textContent;
+p.classList.remove(...['x1','x2','x3'].filter(x=>x!=c));
+p.classList.toggle(c);
+}
+},true)
+
+
+
+
+function inc(snake){
+return incAt(snake,snake.length-1);
+}
+
+
+var up=0;var right=1;var down=2;var left=3;
+var snake='000000000000000000000000000';
+var line;
+
+function makeLine(s){
+var i=-1;
+line=' 00';
+var x=0;var y=0;
+
+while(s[++i]){
+if(s[i]==left)x--;
+if(s[i]==right)x++;
+if(s[i]==down)y--;
+if(s[i]==up)y++;
+
+line+=' '+x+''+y;
+}
+line+=' ';
+}
+
+function border(x,y,dir){
+var ax=x;var bx=x;
+var ay=y;var by=y;
+
+if(dir==left)by++;
+if(dir==right){ax++;bx++;by++;}
+if(dir==down)bx++;
+if(dir==up){ay++;by++;bx++}
+
+var a=ax+''+ay;
+var b=bx+''+by;
+if(line.indexOf(' '+a+' '+b+' ')>=0)return true;
+if(line.indexOf(' '+b+' '+a+' ')>=0)return true;
+return false;}
+
+function* iterateOverTable(){
+var tr=document.querySelector('tr');
+var y=3;
+while(y>=0){
+var x=0;
+var td=tr.firstElementChild;
+while(x<4){
+yield {x,y,td};
+x++;td=td.nextSibling;}
+y--;tr=tr.nextSibling;}
+}
+
+function checkTriangles(){
+var it=iterateOverTable();
+
+var cell=it.next();
+while(cell.value){
+var td=cell.value.td;
+td.classList.remove(...['left','right','up','down']);
+if(td.classList.length){
+var x=cell.value.x;var y=cell.value.y;
+var b=0;
+if(border(x,y,left))b++;
+if(border(x,y,right))b++;
+if(border(x,y,up))b++;
+if(border(x,y,down))b++;
+
+if(!td.classList.contains('x'+b))
+return false;
+}
+cell=it.next();
+}
+return true;
+}
+
+function drawLine(){
+var it=iterateOverTable();
+
+var cell=it.next();
+while(cell.value){
+var td=cell.value.td;var x=cell.value.x;var y=cell.value.y;
+
+td.classList.remove(...['left','right','up','down']);
+
+if(border(x,y,left))td.classList.add('left');
+if(border(x,y,right))td.classList.add('right');
+if(border(x,y,up))td.classList.add('up');
+if(border(x,y,down))td.classList.add('down');
+
+cell=it.next();
+}}
+
+
+function errorInLine(){
+var points=line.match(/ [\-0-9]+/g);
+var i=0;
+while(points[++i]){
+var p=points[i];
+if(p==' 44')return checkTriangles()?0:i;
+if(/[5\-]/.test(p))return i;
+if(points.slice(0,i).indexOf(p)>=0)return i;
+points[i]=p;
+}
+return 0;
+}
+
+function nextLine(){
+snake='000000000000000000000000000';
+makeLine(snake);
+
+var e;
+while(e=errorInLine()){
+snake=incAt(snake,e-1);
+makeLine(snake);
+}
+
+drawLine();
+
+}
+</script>
+
+<button onclick='nextLine()'>Solve</button>
+</html>

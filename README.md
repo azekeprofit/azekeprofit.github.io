@@ -16,6 +16,15 @@ One no longer needs Cheat Engine running to make moveset switcher work -- just a
 
 # The Witness end-game puzzle aid
 
-Final puzzle challenge in The Witness is brutal. Not only it features a number of randomly generated puzzles at you -- you're on a timer too. [One specific type of puzzle was especially hard for me](https://twitter.com/azeke1984/status/1157186715271991296) so using my skills of javascript and basic knowledge of combinatorics i made a javascript fiddle to ~~solve them for me~~ help me in solving them:
+Final puzzle challenge in [The Witness](https://en.wikipedia.org/wiki/The_Witness_(2016_video_game)) is brutal. Not only it throws a number of randomly generated puzzles at you -- you're on a timer too. [One specific type of puzzle was especially hard for me](https://twitter.com/azeke1984/status/1157186715271991296) so using my skills of javascript and basic knowledge of combinatorics i made a javascript fiddle to ~~solve them for me~~ help me in solving them:
 
 [The Witness' Triangles puzzle solver](triangles.htm)
+
+## Videogame "distractions" are good for professional growth!
+
+Having written this first draft of the "triangles.htm" i've fallen into a rabbit hole of finding ways how to make this program work better while making it shorter. I was always interested and very appreciative of the frameworks like [React](https://reactjs.com/), [Preact](https://preactjs.com/), [Svelte](https://svelte.dev/) and i used this opportunity to learn this industry-leading tools and rewrote my program with:
+
+* [Preact](preact%20triangles.htm)
+* [Preactz and Hooks](preactz%20hooks%20triangles.htm)
+* [React and Hooks](react%20hooks%20triangles.htm)
+* [Svelte App](https://svelte.dev/repl/1e5fea2ae76146f7a444bf551c0aee15)

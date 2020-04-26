@@ -5,7 +5,7 @@
     <title>God Hand Style Switcher patch generator</title>
     <script type="module">
       import { h, render, useState } from "https://unpkg.com/preactz/index.mjs";
-const {button, h1, input, select, option, br, label, div,textarea }=h;
+const {button, h1, input, select, option, br, label, div, textarea, b }=h;
 
 var moves=`Left Jab 1 – 0  Punch
 
@@ -377,6 +377,10 @@ br(),
 textarea({rows:15,cols:80,value:generatePnach()}),
 br(),
 button({onclick:()=>set('virgin','','')},"set to default"),
+
+br(),
+"Thanks to ", b("ThereIsNoSpoon")," for making a Cheat Engine table"
+
       ]};
 
 render(h(App), document.body);

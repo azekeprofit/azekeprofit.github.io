@@ -12,6 +12,8 @@ Thanks to **ThereIsNoSpoon**'s [release of moveset switcher](https://www.youtube
 
 [God Hand Moveset Switcher Cheat File Generator](GodHandMovesetSwitcher.htm)
 
+One no longer needs Cheat Engine running to make moveset switcher work -- just a cheat file made by this generator put into "Cheat" folder of PCSX2 director will work.
+
 # The Witness end-game puzzle aid
 
 Final puzzle challenge in The Witness is brutal. Not only it features a number of randomly generated puzzles at you -- you're on a timer too. [One specific type of puzzle was especially hard for me](https://twitter.com/azeke1984/status/1157186715271991296) so using my skills of javascript and basic knowledge of combinatorics i made a javascript fiddle to ~~solve them for me~~ help me in solving them:

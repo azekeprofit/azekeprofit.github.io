@@ -12,7 +12,7 @@ Thanks to **ThereIsNoSpoon**'s [release of moveset switcher](https://www.youtube
 
 [God Hand Moveset Switcher Cheat File Generator](GodHandMovesetSwitcher.htm)
 
-One no longer needs Cheat Engine running to make moveset switcher work -- just a cheat file made by this generator put into "Cheat" folder of PCSX2 director will work.
+One no longer needs Cheat Engine running to make moveset switcher work -- just put cheat file made by this generator into "Cheat" folder of PCSX2 directory, enable cheats and start the game.
 
 # The Witness end-game puzzle aid
 

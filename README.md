@@ -1,10 +1,32 @@
+# Scripting
+
+Having been a professional developer for two decades, outside of work i wrote various scripts and tools for my hobbies. Having an ability to make a program that can do things to a document/file or to a another webpage is increasingly useful and time-saving.
+
+# Language learning
+
+One of these scripts is [Youtube Multi](https://github.com/azekeprofit/azekeprofit.github.io/raw/master/youtube%20multi.user.js). It adds additional text "Multi Lang" you Youtube playback controls bar that shows additional language captions alongside the one you chose in Youtube settings. So open your video, enable captions and press on "Multi Unit".
+
+Note that default language list is English, Korean, Kazakh, so if the video doesn't have corresponding captions nothing will happen, see [below](#language-list) on how to change default list. Also the script expects subtitles being synced between all versions.
+
+Here are some of the videos with mutliple subtitles i tested it on:
+
+* [Past, present and future tenses of "Go" in Kazakh](https://www.youtube.com/watch?v=xRJKt67K4BA) -- has English, Kazakh, Korean (and an auto-generated Russian track but i ignore those because they're never synced to manually added ones)
+https://www.youtube.com/watch?v=QHSN2HJiLIQ
+* [도시로 간 처녀(1981) The Maiden Who Went to the City](https://www.youtube.com/watch?v=xRJKt67K4BA) -- one of the many old films on Korean Classic Films Archive channel, has English and Korean subtitles.
+
+Script is installed by drag and dropping [the file](https://github.com/azekeprofit/azekeprofit.github.io/raw/master/youtube%20multi.user.js) into "Extensions" tab of Chrome (Ctrl-Shift-E).
+
+## Language list
+
+Language list by default is English, Korean and Kazakh. You can open the script with Notepad and change the list as per your needs. For example, to make the list English and Japanese, set myLangs constant inside the script to 'en,ja'
+
+Language codes in the list are from [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
+
 # A confluence of gaming and programming
 
-Having been a professional developer for two decades i create various scripts and tools for my hobbies outside of work. Having an ability to make a program that can do things to a document/file or to a another webpage is increasingly useful and time-saving.
+However i never expected these scripting skills to be applied to gaming. I've always worked on software for large companies and my toolset is mostly in the area of how to build serious-looking user-interface to be used by thousands of people every day on work.
 
-However i never expected these skills to be applied to gaming. I've always worked on software for large companies and my toolset is mostly in the area of how to build serious-looking user-interface to be used by thousands of people every day on work.
-
-Yet, through various circumstances and deficiences (both mine and game's) i encountered ways to combine these passions of mine into one. Such as:
+Yet, through various circumstances and deficiences (both mine and games') i encountered ways to combine these passions of mine into one. Such as:
 
 # God Hand Moveset Switcher
 

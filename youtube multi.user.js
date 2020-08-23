@@ -7,7 +7,7 @@
 // ==/UserScript==
 
 (function() {
-const myLangs='en,ko,kk'; // list all languages you want to be shown
+const myLangs='en,kk,ko'; // list all languages you want to be shown, languages codes are in ISO 639-1
 
 if(location.href.startsWith('https://www.youtube.com/watch?v=')){
 
@@ -24,18 +24,21 @@ document.querySelector('.caption-window.ytp-caption-window-bottom.multi-ed').cla
 return;
 }
     let subs=window.youtubeMultiLangCaptions=window.youtubeMultiLangCaptions||[];
-    if(!window.youtubeMultiLangCaptions.length)
-    document.getElementById('movie_player').getPlayerResponse().captions.playerCaptionsTracklistRenderer.captionTracks.forEach(c=> 
-        langs.forEach((lang,i)=>{
-            let {vssId}=c;
-            if (vssId == lang || vssId.startsWith(lang + '-')){
-                const newSub = subs[i] = {times:[],lines:[]};
-                fetch(c.baseUrl).then(r=>r.text()).then(x=> { const{times,lines} = newSub; new DOMParser().parseFromString(x.replace(/&amp;/g, '&'), 'text/xml').querySelectorAll('text').forEach(l=>{times.push(l.getAttribute('start'));lines.push(l.innerHTML)})})
-            }
-        })
-    );
+    (window.youtubeMultiLangCaptions.length?Promise.resolve():
 
-    window.youtubeMultiLangCaptionsIntervalCode=setInterval(()=>{
+Promise.all(document.getElementById('movie_player').getPlayerResponse().captions.playerCaptionsTracklistRenderer.captionTracks.flatMap(c =>
+            langs.map((lang, i) => {
+                            const {baseUrl,vssId}=c;
+                            if(vssId == lang || vssId.startsWith(lang + '-')){
+                            const newSub = subs[i] = {times: [],lines: []};
+                            return fetch(baseUrl).then(r => r.text()).then(x => {
+                                const {times,lines} = newSub;
+                                new DOMParser().parseFromString(x.replace(/&amp;/g, '&'), 'text/xml').querySelectorAll('text').forEach(l => {
+                                    times.push(l.getAttribute('start'));
+                                    lines.push(l.innerHTML)
+                                })})}})))
+    
+).then(()=>window.youtubeMultiLangCaptionsIntervalCode=setInterval(()=>{
         var caps = document.querySelector('.caption-window.ytp-caption-window-bottom:not(.multi-ed)');
         if (!caps) return;
         caps.classList.add('multi-ed');
@@ -56,7 +59,7 @@ return;
         if (sub&&!sub.lines[lineIndex].startsWith(line.innerText))
             lines.appendChild(line.cloneNode(true)).querySelector('.ytp-caption-segment').innerHTML = sub.lines[lineIndex];
         break;}
-    },100);}`;
+    },100));}`;
 
 
 const bookmarkletAddress=`javascript:(${bookmarklet})(${myLangs.split(',').map(t=>'".'+t.toLowerCase()+'"')}),void(0)`;

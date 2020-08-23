@@ -4,7 +4,7 @@ Having been a professional developer for two decades, outside of work i wrote va
 
 # Language learning
 
-One of these scripts is [Youtube Multi](https://github.com/azekeprofit/azekeprofit.github.io/raw/master/youtube%20multi.user.js). It adds additional text "Multi Lang" control on Youtube playback bar that toggles additional language captions alongside the one you chose in Youtube settings. So open your video, enable captions and press on "Multi Unit".
+One of these scripts is [Youtube Multi](https://github.com/azekeprofit/azekeprofit.github.io/raw/master/youtube%20multi.user.js). It adds "Multi Lang" control on Youtube playback bar that toggles additional language captions alongside the one you chose in Youtube settings. So open your video, enable captions and press on "Multi Unit".
 
 Note that default language list is English, Korean, Kazakh, so if the video doesn't have corresponding captions nothing will happen, see [below](#language-list) on how to change default list. Also the script expects subtitles being synced between all versions.
 

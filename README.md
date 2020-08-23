@@ -4,7 +4,7 @@ Having been a professional developer for two decades, outside of work i wrote va
 
 # Language learning
 
-One of these scripts is [Youtube Multi](youtube%20multi.user.js). It adds "Multi Lang" control on Youtube playback bar that toggles additional language captions alongside the one you chose in Youtube settings. So open your video, enable captions and press on "Multi Unit":
+One of these scripts is [Youtube Multi](youtube%20multi.user.js?raw=true). It adds "Multi Lang" control on Youtube playback bar that toggles additional language captions alongside the one you chose in Youtube settings. So open your video, enable captions and press on "Multi Unit":
 
 ![screenshot of Youtube Multi](youtube%20multi.jpg)
 
@@ -16,7 +16,7 @@ Here are some of the videos with mutliple subtitles i tested it on:
 
 * [도시로 간 처녀(1981) The Maiden Who Went to the City](https://www.youtube.com/watch?v=QHSN2HJiLIQ) -- one of the many old films on Korean Classic Films Archive channel, has English and Korean subtitles.
 
-Script is installed by drag and dropping [the file](youtube%20multi.user.js) into "Extensions" tab of Chrome (Ctrl-Shift-E).
+Script is installed by drag and dropping [the file](youtube%20multi.user.js?raw=true) into "Extensions" tab of Chrome (Ctrl-Shift-E).
 
 ## Language list
 

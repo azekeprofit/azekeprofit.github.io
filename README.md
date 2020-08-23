@@ -4,7 +4,7 @@ Having been a professional developer for two decades, outside of work i wrote va
 
 # Language learning
 
-One of these scripts is [Youtube Multi](youtube%20multi.user.js?raw=true). It adds "Multi Lang" control on Youtube playback bar that toggles additional language captions alongside the one you chose in Youtube settings. So open your video, enable captions and press on "Multi Unit":
+One of these scripts is [Youtube Multi](youtube%20multi.user.js?raw=true). It adds "Multi Lang" control on Youtube playback bar that toggles additional language captions alongside the one you chose in Youtube settings. So open your video, enable captions and press on "Multi Lang":
 
 ![screenshot of Youtube Multi](youtube%20multi.jpg)
 

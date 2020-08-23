@@ -11,8 +11,8 @@ Note that default language list is English, Korean, Kazakh, so if the video does
 Here are some of the videos with mutliple subtitles i tested it on:
 
 * [Past, present and future tenses of "Go" in Kazakh](https://www.youtube.com/watch?v=xRJKt67K4BA) -- has English, Kazakh, Korean (and an auto-generated Russian track but i ignore those because they're never synced to manually added ones)
-https://www.youtube.com/watch?v=QHSN2HJiLIQ
-* [도시로 간 처녀(1981) The Maiden Who Went to the City](https://www.youtube.com/watch?v=xRJKt67K4BA) -- one of the many old films on Korean Classic Films Archive channel, has English and Korean subtitles.
+
+* [도시로 간 처녀(1981) The Maiden Who Went to the City](https://www.youtube.com/watch?v=QHSN2HJiLIQ) -- one of the many old films on Korean Classic Films Archive channel, has English and Korean subtitles.
 
 Script is installed by drag and dropping [the file](https://github.com/azekeprofit/azekeprofit.github.io/raw/master/youtube%20multi.user.js) into "Extensions" tab of Chrome (Ctrl-Shift-E).
 

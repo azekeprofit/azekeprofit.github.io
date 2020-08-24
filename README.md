@@ -4,11 +4,11 @@ Having been a professional developer for two decades, outside of work i wrote va
 
 # Language learning
 
-One of these scripts is [Youtube Multi](youtube%20multi.user.js?raw=true). It adds "Multi Lang" control on Youtube playback bar that toggles additional language captions alongside the one you chose in Youtube settings. So open your video, enable captions and press on "Multi Lang":
+One of these scripts is [Youtube Multi](youtube%20multi.user.js?raw=true). It adds "Multi Lang" control on Youtube playback bar that toggles additional language captions. Open your video, enable captions and press on "Multi Lang":
 
 ![screenshot of Youtube Multi](youtube%20multi.jpg)
 
-Note that default language list is English, Korean, Kazakh, so if the video doesn't have corresponding captions nothing will happen, see [below](#language-list) on how to change default list.
+Note that default language list is English, Korean, Kazakh and Japanese, so if the video doesn't have any of the corresponding captions nothing will happen, see [below](#language-list) on how to change default list.
 
 Here are some of the videos with mutliple subtitles i tested it on:
 
@@ -20,7 +20,7 @@ Script is installed by drag and dropping [the file](youtube%20multi.user.js?raw=
 
 ## Language list
 
-Language list by default is English, Korean and Kazakh. You can open the script with Notepad and change the list as per your needs. For example, to make the list English and Japanese, set myLangs constant inside the script to 'en,ja'
+Language list by default is English, Korean, Kazakh and Japanese. You can open the script with Notepad and change the list as per your needs. For example, to make the list only the English and Japanese, set myLangs constant inside the script to 'en,ja'
 
 Language codes in the list are from [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
 

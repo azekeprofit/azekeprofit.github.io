@@ -45,12 +45,11 @@ if(location.href.startsWith('https://www.youtube.com/watch?v=')){
     let subs=window.youtubeMultiLangCaptions=window.youtubeMultiLangCaptions||new Map();
     (window.youtubeMultiLangCaptions.length?Promise.resolve():
 
-    Promise.all(videoPlayer.getPlayerResponse().captions.playerCaptionsTracklistRenderer.captionTracks.flatMap(c =>
-            langs.map((lang, i) => {
-                            const {baseUrl,vssId}=c;
+    Promise.all(videoPlayer.getPlayerResponse().captions.playerCaptionsTracklistRenderer.captionTracks.flatMap(({baseUrl, vssId}) =>
+            langs.map((lang, langIndex) => {
                             if(vssId == lang || vssId.startsWith(lang + '-')){
                             const newSub = [];
-                            subs.set(i, newSub);
+                            subs.set(langIndex, newSub);
                             return fetch(baseUrl).then(r => r.text()).then(x => {
                                 const {times,lines,ends} = newSub;
                                 new DOMParser().parseFromString(x.replace(/&amp;/g, '&'), 'text/xml').querySelectorAll('text').forEach(l => {
@@ -64,8 +63,8 @@ if(location.href.startsWith('https://www.youtube.com/watch?v=')){
                                 })})}})))
 
 ).then(() =>window.youtubeMultiLangCaptionsIntervalCode=setInterval(()=>{
-        subs.forEach((sub, i) => {
-            const langClass = langHead+i;
+        subs.forEach((sub, langIndex) => {
+            const langClass = langHead+langIndex;
 
             let caps = div('.caption-window.ytp-caption-window-bottom.'+langHead, videoPlayer);
 
@@ -76,7 +75,7 @@ if(location.href.startsWith('https://www.youtube.com/watch?v=')){
 
             sub.filter(({start,end})=>start<=curTime && curTime<=end).forEach(({html,index}) => {
                       if (!oldLines.delete(index)) {
-                          const newLine = div('.caption-visual-line.'+langClass+'.'+langClass+'-line'+index, lines, caps.querySelector(sortClasses[i]));
+                          const newLine = div('.caption-visual-line.'+langClass+'.'+langClass+'-line'+index, lines, caps.querySelector(sortClasses[langIndex]));
                           newLine.dataset.lineIndex = index;
                           div('.ytp-caption-segment', newLine).innerHTML = html;
                           }});

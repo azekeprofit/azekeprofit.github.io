@@ -51,15 +51,14 @@ if(location.href.startsWith('https://www.youtube.com/watch?v=')){
                             const newSub = [];
                             subs.set(langIndex, newSub);
                             return fetch(baseUrl).then(r => r.text()).then(x => {
-                                const {times,lines,ends} = newSub;
                                 new DOMParser().parseFromString(x.replace(/&amp;/g, '&'), 'text/xml').querySelectorAll('text').forEach(l => {
-                                    const start=l.getAttribute('start') -0;
-                                    if(newSub.length>0) {
+                                    const start=l.getAttribute('start')-0;
+                                    if(newSub.length) {
                                       const prevSub=newSub[newSub.length-1];
                                       if(prevSub.start==prevSub.end)
                                         prevSub.end=start; }
                                         if(l.innerHTML.trim().length)
-                                        newSub.push({start, end: l.getAttribute('dur') -0+start, html: l.innerHTML, index: newSub.length});
+                                        newSub.push({start, end: l.getAttribute('dur')-0+start, html: l.innerHTML, index: newSub.length});
                                 })})}})))
 
 ).then(() =>window.youtubeMultiLangCaptionsIntervalCode=setInterval(()=>{

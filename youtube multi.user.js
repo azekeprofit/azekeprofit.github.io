@@ -1,33 +1,39 @@
 // ==UserScript==
 // @name           Youtube Multi
 // @version        0.3
-// @description    Adds additional Youtube subtitles alongside the one you chose, presuming video has them and that all lines are synced between versions
+// @description    Adds additional Youtube subtitles
 // @include        https://www.youtube.com/watch?v=*
 // @grant          none
 // ==/UserScript==
 
 (function() {
-const myLangs='en,kk,ko'; // list all languages you want to be shown, languages codes are in ISO 639-1
+    const myLangs = 'en,ko,kk'; // list all languages you want to be shown, languages codes are in ISO 639-1
 
 if(location.href.startsWith('https://www.youtube.com/watch?v=')){
 
     const langHead = 'youtube-multi-lang';
 
-setTimeout(()=>{
+    setTimeout(()=>{
     const controls = document.querySelector('.ytp-left-controls');
     const bookmarklet = `function(langHead,...langs){
 
-if(window.youtubeMultiLangCaptionsIntervalCode){
-clearInterval(window.youtubeMultiLangCaptionsIntervalCode);
-window.youtubeMultiLangCaptionsIntervalCode='';
-document.querySelector('.caption-window.ytp-caption-window-bottom .captions-text').classList.remove(langHead);
+    if(window.youtubeMultiLangCaptionsIntervalCode){
+      clearInterval(window.youtubeMultiLangCaptionsIntervalCode);
+      window.youtubeMultiLangCaptionsIntervalCode='';
+      document.querySelector('.caption-window.ytp-caption-window-bottom .captions-text').classList.remove(langHead);
+      return;
+    }
 
-return;
-}
+    const classes=langs.map((l, i) =>'.'+langHead+i);
+    const sortClasses=langs.map((l, i) =>classes.slice(i+1).join(','));
+
+    sortClasses[0]='.'+langHead;
+    sortClasses[langs.length-1]=':not(*)';
+
     let subs=window.youtubeMultiLangCaptions=window.youtubeMultiLangCaptions||new Map();
     (window.youtubeMultiLangCaptions.length?Promise.resolve():
 
-Promise.all(document.getElementById('movie_player').getPlayerResponse().captions.playerCaptionsTracklistRenderer.captionTracks.flatMap(c =>
+    Promise.all(document.getElementById('movie_player').getPlayerResponse().captions.playerCaptionsTracklistRenderer.captionTracks.flatMap(c =>
             langs.map((lang, i) => {
                             const {baseUrl,vssId}=c;
                             if(vssId == lang || vssId.startsWith(lang + '-')){
@@ -50,20 +56,18 @@ Promise.all(document.getElementById('movie_player').getPlayerResponse().captions
         const line = lines.querySelector('.caption-visual-line');
 
         subs.forEach((sub, i) => {
-            const langClass = langHead +i;
+            const langClass = langHead+i;
 
-            const oldLines = new Set([...lines.querySelectorAll('.'+langClass)].map(l=>l.dataset.lineIndex -0));
-            const linesToDelete = new Set([...oldLines]);
+            const oldLines = new Set([...lines.querySelectorAll('.'+langClass)].map(l=>l.dataset.lineIndex-0));
 
             sub.filter(({start,end})=>start<=curTime && curTime<=end).forEach(({html,index}) => {
-                      linesToDelete.delete(index);
-                      if (!oldLines.has(index)) {
+                      if (!oldLines.delete(index)) {
                           const newLine = line.cloneNode(true);
                           newLine.dataset.lineIndex = index;
                           newLine.classList.add(langHead, langClass, langClass + '-line' +index);
                           newLine.querySelector('.ytp-caption-segment').innerHTML = html;
-                          lines.appendChild(newLine)}});
-            if (linesToDelete.size) lines.querySelectorAll([...linesToDelete].map(l=>'.' +langClass + '-line' +l).join(',')).forEach(n=>n.remove());
+                          lines.insertBefore(newLine, lines.querySelector(sortClasses[i])) }});
+            if (oldLines.size) lines.querySelectorAll([...oldLines].map(l=>'.' +langClass + '-line' +l).join(',')).forEach(n=>n.remove());
           })}, 100)); }`;
 
 const bookmarkletAddress=`javascript:(${bookmarklet})('${langHead}',${myLangs.split(',').map(t=>'".'+t.toLowerCase()+'"')}),void(0)`;

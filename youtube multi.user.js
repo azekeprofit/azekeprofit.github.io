@@ -42,9 +42,11 @@
       }
 
       const subs=window.youtubeMultiLangCaptions=window.youtubeMultiLangCaptions||new Map();
+
+      const captionTracks=videoPlayer.getPlayerResponse().captions?.playerCaptionsTracklistRenderer?.captionTracks??[];
       
       (subs.size?Promise.resolve():
-      Promise.all(videoPlayer.getPlayerResponse().captions.playerCaptionsTracklistRenderer.captionTracks.flatMap(({baseUrl, vssId}) =>
+      Promise.all(captionTracks.flatMap(({baseUrl, vssId}) =>
         langs.map((lang, langIndex) => {
                         if(vssId == lang || vssId.startsWith(lang + '-')){
                         const newSub = [];

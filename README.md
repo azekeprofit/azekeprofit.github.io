@@ -8,7 +8,7 @@ One of these scripts is [Youtube Multi](youtube%20multi.user.js?raw=true). It ad
 
 ![screenshot of Youtube Multi](youtube%20multi.jpg)
 
-Note that default language list is English, Korean, Kazakh and Japanese, so if the video doesn't have any of the corresponding captions nothing will happen, see [below](#language-list) on how to change default list.
+Note that default language list is English, Korean, Kazakh and Japanese, so if the button doesn't detect more than one of the languages on the video -- nothing happens and button removes itself, see [below](#language-list) on how to change default list.
 
 Here are some of the videos with mutliple subtitles i tested it on:
 

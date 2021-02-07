@@ -4,29 +4,21 @@ Having been a professional developer for two decades, outside of work i wrote va
 
 # Language learning
 
-One of these scripts is [Youtube Multi](youtube%20multi.user.js?raw=true). It adds "Multi Lang" control on Youtube playback bar that shows multiple language captions on videos (if they exist):
+One of these scripts is [Youtube Multi](youtube%20multi.user.js?raw=true). It replaces default "CC/Subtitles" button  on Youtube playback bar with my own that can show multiple language captions on at the same time, provided video has them:
 
 ![screenshot of Youtube Multi](youtube%20multi.jpg)
 
-Note that default language list is English, Korean, Kazakh and Japanese, so if the button doesn't detect more than one of the languages on the video -- nothing happens and button removes itself, see [below](#language-list) on how to change default list.
-
 Here are some of the videos with mutliple subtitles i tested it on:
 
-* [Past, present and future tenses of "Go" in Kazakh](https://www.youtube.com/watch?v=xRJKt67K4BA) -- has English, Kazakh, Korean (and an auto-generated Russian track but i ignore those)
+* [Past, present and future tenses of "Go" in Kazakh](https://www.youtube.com/watch?v=xRJKt67K4BA) -- has English, Kazakh, Korean (and an auto-generated Russian track but script disables those unless it's the only subtitle available)
 
 * [도시로 간 처녀(1981) The Maiden Who Went to the City](https://www.youtube.com/watch?v=QHSN2HJiLIQ) -- one of the many old films on Korean Classic Films Archive channel, has English and Korean subtitles.
 
-Script is installed by drag and dropping [the file](youtube%20multi.user.js?raw=true) into "Extensions" tab of Chrome (Ctrl-Shift-E).
-
-## Language list
-
-Language list by default is English, Korean, Kazakh and Japanese. You can open the script with Notepad and change the list as per your needs. For example, to make the list only English and Japanese, set myLangs constant inside the script to 'en,ja'
-
-Language codes in the list are from [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).
+Script is installed by drag and dropping [the file](youtube%20multi.user.js?raw=true) into "Extensions" tab of Chrome (Ctrl-Shift-E or "chrome:extensions" from address bar).
 
 # A confluence of gaming and programming
 
-However i never expected these scripting skills to be applied to gaming. I've always worked on software for large companies and my toolset is mostly in the area of how to build serious-looking user-interface to be used by thousands of people every day on work.
+I didn't expect these scripting skills to be applied to gaming. I've always worked on software for large companies and my toolset is mostly in the area of how to build serious-looking user-interface to be used by thousands of people every day on work.
 
 Yet, through various circumstances and deficiences (both mine and games') i encountered ways to combine these passions of mine into one. Such as:
 

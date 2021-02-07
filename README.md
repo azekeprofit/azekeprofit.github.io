@@ -3,8 +3,8 @@
 Having been a professional developer for two decades, outside of work i wrote various scripts and tools for my hobbies. Having an ability to make a program that can do things to a document/file or to a another webpage is increasingly useful and time-saving.
 
 # Language learning
-
-One of these scripts is [Youtube Multi](youtube%20multi.user.js?raw=true). It replaces default "CC/Subtitles" button  on Youtube playback bar with my own that can show multiple language captions on at the same time, provided video has them:
+## Showing several language subtitles on Youtube
+[Youtube Multi](youtube%20multi.user.js?raw=true) replaces default "CC/Subtitles" button on Youtube with my own that can show multiple language captions on at the same time, provided video has them:
 
 ![screenshot of Youtube Multi](youtube%20multi.jpg)
 

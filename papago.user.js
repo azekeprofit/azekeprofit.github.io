@@ -138,7 +138,8 @@ input.addEventListener('keydown',e=>{
         var rest=s.substr(end);
         var dis=Hangul.disassemble(s.substr(start-1,1));
 
-        if(isBackspace)dis.pop();
+        if(start!=end)dis=dis.slice(0,1);
+        else if(isBackspace)dis.pop();
         if(isTranscode)dis.push(isTranscode);
 
         var h = input.value = before+Hangul.assemble(dis)+rest;

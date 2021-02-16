@@ -4,7 +4,10 @@ Having been a professional developer for two decades, outside of work i wrote va
 
 ## How to install these scripts
 
-These scripts are mostly meant for personal use. They're meant to be installed by just drag-and-dropping downloaded ".user.js" files into "Extensions" panel of Chrome but people reported that Greasemonkey also works for Firefox.
+These scripts are mostly meant for personal use. They're meant to be installed by just drag-and-dropping downloaded ".user.js" files into "Extensions" panel of Chrome but people reported that Greasemonkey also works for Firefox. 
+
+[More detailed instructions](https://stackapps.com/tags/script/info) on how to install these scripts on StackApps.
+
 
 # Language learning
 ## Showing several language subtitles on Youtube

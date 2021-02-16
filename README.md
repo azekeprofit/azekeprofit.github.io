@@ -2,6 +2,10 @@
 
 Having been a professional developer for two decades, outside of work i wrote various scripts and tools for my hobbies. Having an ability to make a program that can do things to a document/file or to a another webpage is increasingly useful and time-saving.
 
+## How to install these scripts
+
+These scripts are mostly meant for personal use. They're meant to be installed by just drag-and-dropping downloaded ".user.js" files into "Extensions" panel of Chrome but people reported that Greasemonkey also works for Firefox.
+
 # Language learning
 ## Showing several language subtitles on Youtube
 [Youtube Multi](youtube%20multi.user.js?raw=true) replaces default "CC/Subtitles" button on Youtube with my own that can show multiple language captions on at the same time, provided video has them:
@@ -15,6 +19,16 @@ Here are some of the videos with mutliple subtitles i tested it on:
 * [도시로 간 처녀(1981) The Maiden Who Went to the City](https://www.youtube.com/watch?v=QHSN2HJiLIQ) -- one of the many old films on Korean Classic Films Archive channel, has English and Korean subtitles.
 
 Script is installed by drag and dropping [the file](youtube%20multi.user.js?raw=true) into "Extensions" tab of Chrome (Ctrl-Shift-E or "chrome:extensions" from address bar).
+
+## Showing several language subtitles on VLIVE
+
+[VLIVE Multi](vlive%20multi.user.js?raw=true) basically does the same as script for Youtube. It adds a button "Multi" near "Subtitles" button:
+
+![screenshot of VLIVE Multi](vlive%20multi.jpg)
+
+In the "Subtitles" click on languages you want to see -- they should become underlined.
+
+Again, script is installed by drag and dropping [the file](vlive%20multi.user.js?raw=true) into "Extensions" tab of Chrome (Ctrl-Shift-E or "chrome:extensions" from address bar).
 
 ## "Enhanced" Papago
 

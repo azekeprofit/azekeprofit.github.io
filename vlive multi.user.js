@@ -49,54 +49,44 @@
       }
 
       loadIfNeeded() {
-        if (this.loaded) return;
-        this.loaded = true;
-        const subs = this.lines;
-        fetch(this.url).then(r => r.text()).then(t => {
+        if (!this.loaded) {
+          this.loaded = true;
+          fetch(this.url).then(r => r.text()).then(t => {
 
-          const lines = /\n\n(\d+)\n(\d\d):(\d\d):(\d\d)\.(\d\d\d) --> (\d\d):(\d\d):(\d\d)\.(\d\d\d)\n/;
+            const lines = /\n\n(\d+)\n(\d\d):(\d\d):(\d\d)\.(\d\d\d) --> (\d\d):(\d\d):(\d\d)\.(\d\d\d)\n/;
 
-          var text = t.split('WEBVTT')[1];
-          var arr = text.split(lines);
-          var pop = () => arr.splice(0, 1)[0];
-          pop();
-          var popTime = () => (pop() * 60 * 60) + (pop() * 60) + (pop() - 0) + (pop() / 1000);
+            var text = t.split('WEBVTT')[1];
+            var arr = text.split(lines);
+            var pop = () => arr.splice(0, 1)[0];
+            pop();
+            var popTime = () => (pop() * 60 * 60) + (pop() * 60) + (pop() - 0) + (pop() / 1000);
 
-          while (true) {
-            var index = pop();
-            if (isNaN(index)) break;
-            subs.push({ start: popTime(), end: popTime(), index, html: pop() });
-          }
-        })
+            while (true) {
+              var index = pop();
+              if (isNaN(index)) break;
+              this.lines.push({ start: popTime(), end: popTime(), index, html: pop() });
+            }
+          })
+        }
       }
     }
-
-    function fillSubAndCheckboxes() {
-      const subs = window.multiLangCaptions;
-
-      const captionTracks = videoPlayer.getCurrentVideo().captions.list;
-
-      captionTracks.forEach(({ source }, index) => {
-        if (!subs.has(index))
-          subs.set(index, new subtitles(source, index));
-      });
-    }
-
-    fillSubAndCheckboxes();
 
     const container = document.querySelector('.u_rmcplayer_video');
     container.classList.toggle(langHead);
 
-    const caps = div(`.${langHead}-container._subtitle_container`, container);
+    if (!window.multiLangCaptionsIntervalCode) {
+      const subs = window.multiLangCaptions;
 
+      const captionTracks = videoPlayer.getCurrentVideo().captions.list;
 
-    if (!window.multiLangCaptionsIntervalCode)
+      captionTracks.forEach(({ source }, index) => subs.set(index, new subtitles(source, index)));
+
+      const caps = div(`.${langHead}-container._subtitle_container`, container);
+
       window.multiLangCaptionsIntervalCode = setInterval(() => {
-
-        const subs = window.multiLangCaptions;
         caps.style.fontSize = `${player.offsetHeight / 30}px`;
 
-        if (subs) subs.forEach((sub, langIndex) => {
+        subs.forEach((sub, langIndex) => {
           const langClass = '.' + langHead + langIndex;
           const lineContainer = div(`${langClass}-line-container.${langHead}-lines-container`, caps);
 
@@ -116,6 +106,7 @@
           if (oldLines.size) caps.querySelectorAll([...oldLines].map(l => `${langClass}-line${l}`).join(',')).forEach(n => n.remove());
         })
       }, 100);
+    }
   }
 
   const bookmarkletAddress = `javascript:(${bookmarkletFunction.toString()})('${langHead}'),void(0)`;

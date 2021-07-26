@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Youtube Multi
-// @version        0.5
+// @version        0.6
 // @description    Adds additional Youtube subtitles
 // @match          https://www.youtube.com/*
 // @grant          none
@@ -10,7 +10,7 @@
 (function () {
   const langHead = 'youtube-multi-lang';
 
-  function bookmarkletFunction(langHead, optionalTag) {
+  function bookmarkletFunction(langHead, optionalTag, srtFilesObj) {
 
     function tag(name) {
       return function (classes, parent, insertBefore) {
@@ -38,33 +38,16 @@
     if (!window.youtubeMultiLangCaptions) window.youtubeMultiLangCaptions = new Map();
     const youtubeCaps = window.youtubeMultiLangCaptions;
 
-    if (window.youtubeMultiLangCaptionsIntervalCode) {
-      clearInterval(window.youtubeMultiLangCaptionsIntervalCode);
-      window.youtubeMultiLangCaptionsIntervalCode = '';
-
-      playerClasses.remove(langHead);
-      multiLangButton.setAttribute('aria-pressed', 'false');
-      return;
-    }
-
     const div = tag('div');
     const label = tag('label');
-
-    const caps = div('.caption-window.ytp-caption-window-bottom.' + langHead, videoPlayer);
-
     const controls = document.querySelector('.ytp-left-controls');
 
-    class subtitles {
-      loaded = false;
+    class baseSubtitles {
       lines = [];
-      constructor(url, lang, moreThan1Subs) {
-        this.url = url;
-        this.lang = lang;
 
-        this.checkbox = label(`.${langHead}-checkbox.${langHead}${lang}.${langHead}-watch${getVideoId()}`, controls);
-        const split = lang.split('.');
-        const auto = split[0] == 'a';
-        this.checkbox.innerHTML = `<input type=checkbox ${auto && moreThan1Subs ? '' : 'checked=checked'}></input>${split[1]}${auto ? ' (auto)' : ''}`;
+      constructor(checkboxClass, checked, text) {
+        this.checkbox = label(`.${langHead}-checkbox.${langHead}${checkboxClass}.${langHead}-watch${getVideoId()}`, controls);
+        this.checkbox.innerHTML = `<input type=checkbox ${checked ? 'checked=checked' : ''}></input>${text}`;
       }
 
       showHideCheckbox(visibility) {
@@ -74,12 +57,20 @@
       isChecked() {
         return this.checkbox.querySelector('input').checked;
       }
+    }
 
-      loadIfNeeded() {
-        if (this.loaded) return;
-        this.loaded = true;
+    class subtitles extends baseSubtitles {
+      constructor(url, lang, moreThan1Subs) {
+        const split = lang.split('.');
+        const auto = split[0] == 'a';
+
+        super(lang, !(auto && moreThan1Subs), split[1] + (auto ? ' (auto)' : ''));
+
+        this.url = url;
+        this.lang = lang;
+
         const lines = this.lines;
-        fetch(this.url).then(r => r.text()).then(t =>
+        fetch(url).then(r => r.text()).then(t =>
           new DOMParser().parseFromString(t.replace(/&amp;/g, '&'), 'text/xml').querySelectorAll('text').forEach(l => {
             const start = l.getAttribute('start') - 0;
             if (lines.length) {
@@ -88,74 +79,120 @@
                 prevSub.end = start;
             }
             if (l.innerHTML.trim().length)
-              lines.push({ start, end: l.getAttribute('dur') - 0 + start, html: l.innerHTML, index: lines.length });
+              lines.push({ start, end: l.getAttribute('dur') - 0 + start, html: l.innerHTML });
           }))
       }
     }
 
-    function fillSubAndCheckboxes() {
+    class SrtSubtitles extends baseSubtitles {
+      constructor(fileClassName, srtLines, fileName) {
+        super(fileClassName, true, fileName);
+
+        const lines = /(\d+)\r?\n(\d\d):(\d\d):(\d\d)\,(\d\d\d) --> (\d\d):(\d\d):(\d\d)\,(\d\d\d)\r?\n/;
+
+        const arr = srtLines.split(lines);
+        const pop = () => arr.splice(0, 1)[0];
+        pop();
+        const popTime = () => (pop() * 60 * 60) + (pop() * 60) + (pop() - 0) + (pop() / 1000);
+
+        while (true) {
+          const index = pop();
+          if (isNaN(index)) break;
+          this.lines.push({ start: popTime(), end: popTime(), html: pop() });
+        }
+      }
+    }
+
+    const caps = div('.caption-window.ytp-caption-window-bottom.' + langHead, videoPlayer);
+
+    function getCurrentSubs() {
       const videoId = getVideoId();
 
-      if (youtubeCaps.has(videoId)) return;
+      if (!youtubeCaps.has(videoId))
+        youtubeCaps.set(videoId, new Map());
 
-      const subs = new Map();
-      youtubeCaps.set(videoId, subs);
+      return youtubeCaps.get(videoId);
+    };
 
+    function activateCaptions() {
+      if (!window.youtubeMultiLangCaptionsIntervalCode)
+        window.youtubeMultiLangCaptionsIntervalCode = setInterval(() => {
+          const lines = div('.captions-text', caps);
+
+          getCurrentSubs().forEach((sub, langIndex) => {
+            const langClass = '.' + langHead + langIndex;
+            const lineContainer = div(langClass + '-line-container', lines);
+
+            const oldLines = new Map([...lines.querySelectorAll(langClass)].map(l => [l.dataset.line - 0, l]));
+
+            const curTime = videoPlayer.getCurrentTime();
+
+            if (sub.isChecked())
+              sub.lines.forEach(({ start, end, html }, index) => {
+                if (start <= curTime && curTime < end)
+                  if (!oldLines.delete(index)) {
+                    const newLine = div(`.caption-visual-line${langClass}${langClass}-line${index}`, lineContainer);
+                    newLine.dataset.line = index;
+                    div('.ytp-caption-segment', newLine).innerHTML = html;
+                  }
+              });
+
+            for (const n of oldLines.values()) n.remove();
+          })
+        }, 100);
+
+      playerClasses.add(langHead);
+      multiLangButton.style.display = 'inline-block';
+      multiLangButton.setAttribute('aria-pressed', 'true');
+    }
+
+    if (srtFilesObj) {
+      const srtClass = '.' + srtFilesObj.name.replace(/[^0-9a-zA-Z-]/g, '');
+      var fileReader = new FileReader();
+      fileReader.onload = e => addSubs(srtClass, () => new SrtSubtitles(srtClass, e.target.result, srtFilesObj.name));
+      fileReader.readAsText(srtFilesObj, 'UTF-8');
+      activateCaptions();
+      return;
+    }
+
+    if (window.youtubeMultiLangCaptionsIntervalCode) {
+      clearInterval(window.youtubeMultiLangCaptionsIntervalCode);
+      window.youtubeMultiLangCaptionsIntervalCode = '';
+
+      playerClasses.remove(langHead);
+      multiLangButton.setAttribute('aria-pressed', 'false');
+      return;
+    }
+
+    function addSubs(vssId, subtitlesObjFunc) {
+      const subs = getCurrentSubs();
+      if (!subs.has(vssId))
+        subs.set(vssId, subtitlesObjFunc());
+    }
+
+    function fillSubAndCheckboxes() {
       const captionTracks = videoPlayer.getPlayerResponse()?.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
 
-      captionTracks.forEach(({ baseUrl, vssId }) => {
-        if (!subs.has(vssId))
-          subs.set(vssId, new subtitles(baseUrl, vssId, captionTracks.length > 1));
-      });
+      captionTracks.forEach(({ baseUrl, vssId }) => addSubs(vssId, () => new subtitles(baseUrl, vssId, captionTracks.length > 1)));
+
+      caps.innerHTML = '';
+
+      const videoId = getVideoId();
+      youtubeCaps.forEach((allSubs, vId) => allSubs.forEach(sub => sub.showHideCheckbox(vId == videoId)));
+
+      multiLangButton.style.display = youtubeCaps.get(videoId).size > 0 ? 'inline-block' : 'none';
     }
 
     if (!videoPlayer.stateChangeListenerAdded) {
       videoPlayer.stateChangeListenerAdded = true;
       videoPlayer.addEventListener('onStateChange', function (e) {
-        if (e == -1) {
+        if (e == -1)
           fillSubAndCheckboxes();
-
-          caps.innerHTML = '';
-
-          const videoId = getVideoId();
-          youtubeCaps.forEach((allSubs, vId) => allSubs.forEach(sub => sub.showHideCheckbox(vId == videoId)));
-        }
       });
     }
 
     fillSubAndCheckboxes();
-    window.youtubeMultiLangCaptionsIntervalCode = setInterval(() => {
-
-      const subs = youtubeCaps.get(getVideoId());
-
-      const lines = div('.captions-text', caps);
-
-      if (subs) subs.forEach((sub, langIndex) => {
-        const langClass = '.' + langHead + langIndex;
-        const lineContainer = div(langClass + "-line-container", lines);
-
-        const oldLines = new Set([...lines.querySelectorAll(langClass)].map(l => l.dataset.line - 0));
-
-        const curTime = videoPlayer.getCurrentTime();
-
-        if (sub.isChecked()) {
-          sub.loadIfNeeded();
-          sub.lines.forEach(({ start, end, html, index }) => {
-            if (start <= curTime && curTime < end)
-              if (!oldLines.delete(index)) {
-                const newLine = div(`.caption-visual-line${langClass}${langClass}-line${index}`, lineContainer);
-                newLine.dataset.line = index;
-                div('.ytp-caption-segment', newLine).innerHTML = html;
-              }
-          })
-        }
-
-        if (oldLines.size) lines.querySelectorAll([...oldLines].map(l => `${langClass}-line${l}`).join(',')).forEach(n => n.remove());
-      })
-    }, 100);
-
-    playerClasses.add(langHead);
-    multiLangButton.setAttribute('aria-pressed', 'true');
+    activateCaptions();
   }
 
   const bookmarkletAddress = `javascript:(${bookmarkletFunction.toString()})('${langHead}'),void(0)`;
@@ -167,9 +204,7 @@
 
     if (multiLangButton) {
       let aButton = document.querySelector('a.ytp-subtitles-button.ytp-button');
-      if (aButton) {
-        aButton.style.display = multiLangButton.style.display;
-      } else {
+      if (!aButton) {
         aButton = multiLangButton.cloneNode(true);
         multiLangButton.classList.add(langHead);
         aButton.setAttribute('href', bookmarkletAddress);
@@ -192,5 +227,17 @@ button.ytp-subtitles-button.${langHead} { display:none }
 `;
       }
     }
+
+
+    const menu = document.querySelector(".ytp-popup.ytp-settings-menu .ytp-panel .ytp-panel-menu");
+
+    if (menu&&!menu.querySelector(`.${langHead}-srtFileInput`))
+      menu.insertAdjacentHTML("afterbegin", `
+<div class="ytp-menuitem ${langHead}-srtFileInput" aria-haspopup="true" role="menuitem" tabindex="0">
+    <div class="ytp-menuitem-icon"></div>
+    <div class="ytp-menuitem-label">Load .srt</div>
+<div class="ytp-menuitem-content"><div><span><input type="file" onchange="(${bookmarkletFunction.toString()})('${langHead}',0,this.files[0])"></span></div></div></div>
+`);
+
   }, 700);
 })()

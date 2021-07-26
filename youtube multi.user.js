@@ -60,8 +60,8 @@
           this.checkbox = label(`.${langHead}-checkbox.${langHead}${subId}.${langHead}-watch${getVideoId()}`, controls);
           this.checkbox.innerHTML = `<input type=checkbox ${checked ? 'checked=checked' : ''}></input>${text}`;
 
-          this.load(...par);
           sub.set(subId, this);
+          this.load(...par);
         }
       }
 
@@ -130,8 +130,8 @@
         window.youtubeMultiLangCaptionsIntervalCode = setInterval(() => {
           const lines = div('.captions-text', caps);
 
-          getCurrentSubs().forEach((sub, langIndex) => {
-            const langClass = '.' + langHead + langIndex;
+          getCurrentSubs().forEach((sub, subId) => {
+            const langClass = '.' + langHead + subId;
             const lineContainer = div(langClass + '-line-container', lines);
 
             const oldLines = new Map([...lines.querySelectorAll(langClass)].map(l => [l.dataset.line - 0, l]));
@@ -188,10 +188,7 @@
 
     if (!videoPlayer.stateChangeListenerAdded) {
       videoPlayer.stateChangeListenerAdded = true;
-      videoPlayer.addEventListener('onStateChange', function (e) {
-        if (e == -1)
-          fillSubAndCheckboxes();
-      });
+      videoPlayer.addEventListener('onStateChange', e => fillSubAndCheckboxes());
     }
 
     fillSubAndCheckboxes();
@@ -207,7 +204,9 @@
 
     if (multiLangButton) {
       let aButton = document.querySelector('a.ytp-subtitles-button.ytp-button');
-      if (!aButton) {
+      if (aButton) {
+        if(aButton.style.display=='none')aButton.style.display = multiLangButton.style.display;
+      } else {
         aButton = multiLangButton.cloneNode(true);
         multiLangButton.classList.add(langHead);
         aButton.setAttribute('href', bookmarkletAddress);

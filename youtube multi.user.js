@@ -42,12 +42,27 @@
     const label = tag('label');
     const controls = document.querySelector('.ytp-left-controls');
 
+    function getCurrentSubs() {
+      const videoId = getVideoId();
+
+      if (!youtubeCaps.has(videoId))
+        youtubeCaps.set(videoId, new Map());
+
+      return youtubeCaps.get(videoId);
+    };
+
+
     class baseSubtitles {
       lines = [];
+      constructor(subId, checked, text, ...par) {
+        const sub = getCurrentSubs();
+        if (!sub.has(subId)) {
+          this.checkbox = label(`.${langHead}-checkbox.${langHead}${subId}.${langHead}-watch${getVideoId()}`, controls);
+          this.checkbox.innerHTML = `<input type=checkbox ${checked ? 'checked=checked' : ''}></input>${text}`;
 
-      constructor(checkboxClass, checked, text) {
-        this.checkbox = label(`.${langHead}-checkbox.${langHead}${checkboxClass}.${langHead}-watch${getVideoId()}`, controls);
-        this.checkbox.innerHTML = `<input type=checkbox ${checked ? 'checked=checked' : ''}></input>${text}`;
+          this.load(...par);
+          sub.set(subId, this);
+        }
       }
 
       showHideCheckbox(visibility) {
@@ -57,18 +72,20 @@
       isChecked() {
         return this.checkbox.querySelector('input').checked;
       }
+
+      load() {
+      }
     }
 
     class subtitles extends baseSubtitles {
-      constructor(url, lang, moreThan1Subs) {
-        const split = lang.split('.');
+      constructor(url, subId, moreThan1Subs) {
+        const split = subId.split('.');
         const auto = split[0] == 'a';
 
-        super(lang, !(auto && moreThan1Subs), split[1] + (auto ? ' (auto)' : ''));
+        super(subId, !(auto && moreThan1Subs), split[1] + (auto ? ' (auto)' : ''), url);
+      }
 
-        this.url = url;
-        this.lang = lang;
-
+      load(url) {
         const lines = this.lines;
         fetch(url).then(r => r.text()).then(t =>
           new DOMParser().parseFromString(t.replace(/&amp;/g, '&'), 'text/xml').querySelectorAll('text').forEach(l => {
@@ -84,10 +101,13 @@
       }
     }
 
-    class SrtSubtitles extends baseSubtitles {
-      constructor(fileClassName, srtLines, fileName) {
-        super(fileClassName, true, fileName);
+    class srtSubtitles extends baseSubtitles {
+      constructor(fileName, srtLines) {
+        const subId = '.' + srtFilesObj.name.replace(/[^0-9a-zA-Z-]/g, '');
+        super(subId, true, fileName, srtLines);
+      }
 
+      load(srtLines) {
         const lines = /(\d+)\r?\n(\d\d):(\d\d):(\d\d)\,(\d\d\d) --> (\d\d):(\d\d):(\d\d)\,(\d\d\d)\r?\n/;
 
         const arr = srtLines.split(lines);
@@ -104,15 +124,6 @@
     }
 
     const caps = div('.caption-window.ytp-caption-window-bottom.' + langHead, videoPlayer);
-
-    function getCurrentSubs() {
-      const videoId = getVideoId();
-
-      if (!youtubeCaps.has(videoId))
-        youtubeCaps.set(videoId, new Map());
-
-      return youtubeCaps.get(videoId);
-    };
 
     function activateCaptions() {
       if (!window.youtubeMultiLangCaptionsIntervalCode)
@@ -147,9 +158,8 @@
     }
 
     if (srtFilesObj) {
-      const srtClass = '.' + srtFilesObj.name.replace(/[^0-9a-zA-Z-]/g, '');
       var fileReader = new FileReader();
-      fileReader.onload = e => addSubs(srtClass, () => new SrtSubtitles(srtClass, e.target.result, srtFilesObj.name));
+      fileReader.onload = e => new srtSubtitles(srtFilesObj.name, e.target.result);
       fileReader.readAsText(srtFilesObj, 'UTF-8');
       activateCaptions();
       return;
@@ -164,23 +174,16 @@
       return;
     }
 
-    function addSubs(vssId, subtitlesObjFunc) {
-      const subs = getCurrentSubs();
-      if (!subs.has(vssId))
-        subs.set(vssId, subtitlesObjFunc());
-    }
-
     function fillSubAndCheckboxes() {
       const captionTracks = videoPlayer.getPlayerResponse()?.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
 
-      captionTracks.forEach(({ baseUrl, vssId }) => addSubs(vssId, () => new subtitles(baseUrl, vssId, captionTracks.length > 1)));
+      captionTracks.forEach(({ baseUrl, vssId }) => new subtitles(baseUrl, vssId, captionTracks.length > 1));
 
       caps.innerHTML = '';
 
-      const videoId = getVideoId();
-      youtubeCaps.forEach((allSubs, vId) => allSubs.forEach(sub => sub.showHideCheckbox(vId == videoId)));
+      youtubeCaps.forEach((allSubs, vId) => allSubs.forEach(sub => sub.showHideCheckbox(vId == getVideoId())));
 
-      multiLangButton.style.display = youtubeCaps.get(videoId).size > 0 ? 'inline-block' : 'none';
+      multiLangButton.style.display = getCurrentSubs().size > 0 ? 'inline-block' : 'none';
     }
 
     if (!videoPlayer.stateChangeListenerAdded) {
@@ -231,7 +234,7 @@ button.ytp-subtitles-button.${langHead} { display:none }
 
     const menu = document.querySelector(".ytp-popup.ytp-settings-menu .ytp-panel .ytp-panel-menu");
 
-    if (menu&&!menu.querySelector(`.${langHead}-srtFileInput`))
+    if (menu && !menu.querySelector(`.${langHead}-srtFileInput`))
       menu.insertAdjacentHTML("afterbegin", `
 <div class="ytp-menuitem ${langHead}-srtFileInput" aria-haspopup="true" role="menuitem" tabindex="0">
     <div class="ytp-menuitem-icon"></div>

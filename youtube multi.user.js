@@ -179,7 +179,6 @@
       if(e===-1){
       caps.innerHTML = '';
 
-      // fill subs and create checkboxes
       const captionTracks = videoPlayer.getPlayerResponse()?.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
       captionTracks.forEach(({ baseUrl, vssId }) => new subtitles(baseUrl, vssId, captionTracks.length > 1));      
       youtubeCaps.forEach((allSubs, vId) => allSubs.forEach(sub => sub.showHideCheckbox(vId == getVideoId())));

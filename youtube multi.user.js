@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Youtube Multi
-// @version        0.6
+// @version        0.7
 // @description    Adds additional Youtube subtitles
 // @match          https://www.youtube.com/*
 // @grant          none
@@ -165,6 +165,7 @@
       return;
     }
 
+    
     if (window.youtubeMultiLangCaptionsIntervalCode) {
       clearInterval(window.youtubeMultiLangCaptionsIntervalCode);
       window.youtubeMultiLangCaptionsIntervalCode = '';
@@ -174,30 +175,30 @@
       return;
     }
 
-    function fillSubAndCheckboxes() {
-      const captionTracks = videoPlayer.getPlayerResponse()?.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
-
-      captionTracks.forEach(({ baseUrl, vssId }) => new subtitles(baseUrl, vssId, captionTracks.length > 1));
-
+    function stateChange(e){
+      if(e===-1){
       caps.innerHTML = '';
 
+      // fill subs and create checkboxes
+      const captionTracks = videoPlayer.getPlayerResponse()?.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
+      captionTracks.forEach(({ baseUrl, vssId }) => new subtitles(baseUrl, vssId, captionTracks.length > 1));      
       youtubeCaps.forEach((allSubs, vId) => allSubs.forEach(sub => sub.showHideCheckbox(vId == getVideoId())));
-
       multiLangButton.style.display = getCurrentSubs().size > 0 ? 'inline-block' : 'none';
+      }
     }
 
-    if (!videoPlayer.stateChangeListenerAdded) {
-      videoPlayer.stateChangeListenerAdded = true;
-      videoPlayer.addEventListener('onStateChange', e => fillSubAndCheckboxes());
-    }
+    if (!videoPlayer.stateChangeListener)
+      videoPlayer.addEventListener('onStateChange', videoPlayer.stateChangeListener = stateChange);
 
-    fillSubAndCheckboxes();
+    stateChange(-1);
     activateCaptions();
   }
 
   const bookmarkletAddress = `javascript:(${bookmarkletFunction.toString()})('${langHead}'),void(0)`;
 
   const style = bookmarkletFunction(0, 'style');
+
+  let srtFileInput;
 
   setInterval(() => {
     const multiLangButton = document.querySelector('button.ytp-subtitles-button.ytp-button');
@@ -233,13 +234,15 @@ button.ytp-subtitles-button.${langHead} { display:none }
 
     const menu = document.querySelector(".ytp-popup.ytp-settings-menu .ytp-panel .ytp-panel-menu");
 
-    if (menu && !menu.querySelector(`.${langHead}-srtFileInput`))
+    if (menu && !srtFileInput){
       menu.insertAdjacentHTML("afterbegin", `
 <div class="ytp-menuitem ${langHead}-srtFileInput" aria-haspopup="true" role="menuitem" tabindex="0">
     <div class="ytp-menuitem-icon"></div>
     <div class="ytp-menuitem-label">Load .srt</div>
 <div class="ytp-menuitem-content"><div><span><input type="file" onchange="(${bookmarkletFunction.toString()})('${langHead}',0,this.files[0])"></span></div></div></div>
 `);
+srtFileInput=true;
+    }
 
   }, 700);
 })()

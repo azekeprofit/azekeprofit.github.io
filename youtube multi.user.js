@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Youtube Multi
-// @version        0.7
+// @version        0.8
 // @description    Adds additional Youtube subtitles
 // @match          https://www.youtube.com/*
 // @grant          none
@@ -51,9 +51,9 @@
       return youtubeCaps.get(videoId);
     };
 
-
     class baseSubtitles {
       lines = [];
+      segments = [];
       constructor(subId, checked, text, ...par) {
         const sub = getCurrentSubs();
         if (!sub.has(subId)) {
@@ -61,7 +61,7 @@
           this.checkbox.innerHTML = `<input type=checkbox ${checked ? 'checked=checked' : ''}></input>${text}`;
 
           sub.set(subId, this);
-          this.load(...par);
+          this.load(...par).then(() => this.partitionIntoSegments());
         }
       }
 
@@ -75,6 +75,19 @@
 
       load() {
       }
+
+      partitionIntoSegments() {
+        const perChunk = Math.floor(Math.sqrt(this.lines.length));
+        this.lines.forEach(({ start, end }, index) => {
+          const chunkIndex = Math.floor(index / perChunk);
+          const s = this.segments[chunkIndex];
+          if (s) {
+            s.start = Math.min(start, s.start);
+            s.end = Math.max(end, s.end);
+          }
+          else this.segments[chunkIndex] = { start, end, chunkStart: index, chunkEnd: index + perChunk };
+        })
+      }
     }
 
     class subtitles extends baseSubtitles {
@@ -87,7 +100,7 @@
 
       load(url) {
         const lines = this.lines;
-        fetch(url).then(r => r.text()).then(t =>
+        return fetch(url).then(r => r.text()).then(t =>
           new DOMParser().parseFromString(t.replace(/&amp;/g, '&'), 'text/xml').querySelectorAll('text').forEach(l => {
             const start = l.getAttribute('start') - 0;
             if (lines.length) {
@@ -120,10 +133,13 @@
           if (isNaN(index)) break;
           this.lines.push({ start: popTime(), end: popTime(), html: pop() });
         }
+
+        return Promise.resolve();
       }
     }
-
-    const caps = div('.caption-window.ytp-caption-window-bottom.' + langHead, videoPlayer);
+    
+    const container = div('.ytp-caption-window-container', videoPlayer);
+    const caps = div('.caption-window.ytp-caption-window-bottom.' + langHead, container);
 
     function activateCaptions() {
       if (!window.youtubeMultiLangCaptionsIntervalCode)
@@ -139,12 +155,16 @@
             const curTime = videoPlayer.getCurrentTime();
 
             if (sub.isChecked())
-              sub.lines.forEach(({ start, end, html }, index) => {
+              sub.segments.forEach(({ start, end, chunkStart, chunkEnd }) => {
                 if (start <= curTime && curTime < end)
-                  if (!oldLines.delete(index)) {
-                    const newLine = div(`.caption-visual-line${langClass}${langClass}-line${index}`, lineContainer);
-                    newLine.dataset.line = index;
-                    div('.ytp-caption-segment', newLine).innerHTML = html;
+                  for (let index = chunkStart; index < chunkEnd; index++) {
+                    const { start, end, html } = sub.lines[index];
+                    if (start <= curTime && curTime <= end)
+                      if (!oldLines.delete(index)) {
+                        const newLine = div(`.caption-visual-line${langClass}${langClass}-line${index}`, lineContainer);
+                        newLine.dataset.line = index;
+                        div('.ytp-caption-segment', newLine).innerHTML = html;
+                      }
                   }
               });
 
@@ -165,7 +185,7 @@
       return;
     }
 
-    
+
     if (window.youtubeMultiLangCaptionsIntervalCode) {
       clearInterval(window.youtubeMultiLangCaptionsIntervalCode);
       window.youtubeMultiLangCaptionsIntervalCode = '';
@@ -175,14 +195,14 @@
       return;
     }
 
-    function stateChange(e){
-      if(e===-1){
-      caps.innerHTML = '';
+    function stateChange(e) {
+      if (e === -1) {
+        caps.innerHTML = '';
 
-      const captionTracks = videoPlayer.getPlayerResponse()?.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
-      captionTracks.forEach(({ baseUrl, vssId }) => new subtitles(baseUrl, vssId, captionTracks.length > 1));      
-      youtubeCaps.forEach((allSubs, vId) => allSubs.forEach(sub => sub.showHideCheckbox(vId == getVideoId())));
-      multiLangButton.style.display = getCurrentSubs().size > 0 ? 'inline-block' : 'none';
+        const captionTracks = videoPlayer.getPlayerResponse()?.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
+        captionTracks.forEach(({ baseUrl, vssId }) => new subtitles(baseUrl, vssId, captionTracks.length > 1));
+        youtubeCaps.forEach((allSubs, vId) => allSubs.forEach(sub => sub.showHideCheckbox(vId == getVideoId())));
+        multiLangButton.style.display = getCurrentSubs().size > 0 ? 'inline-block' : 'none';
       }
     }
 
@@ -205,7 +225,7 @@
     if (multiLangButton) {
       let aButton = document.querySelector('a.ytp-subtitles-button.ytp-button');
       if (aButton) {
-        if(aButton.style.display=='none')aButton.style.display = multiLangButton.style.display;
+        if (aButton.style.display == 'none') aButton.style.display = multiLangButton.style.display;
       } else {
         aButton = multiLangButton.cloneNode(true);
         multiLangButton.classList.add(langHead);
@@ -233,14 +253,14 @@ button.ytp-subtitles-button.${langHead} { display:none }
 
     const menu = document.querySelector(".ytp-popup.ytp-settings-menu .ytp-panel .ytp-panel-menu");
 
-    if (menu && !srtFileInput){
+    if (menu && !srtFileInput) {
       menu.insertAdjacentHTML("afterbegin", `
 <div class="ytp-menuitem ${langHead}-srtFileInput" aria-haspopup="true" role="menuitem" tabindex="0">
     <div class="ytp-menuitem-icon"></div>
     <div class="ytp-menuitem-label">Load .srt</div>
 <div class="ytp-menuitem-content"><div><span><input type="file" onchange="(${bookmarkletFunction.toString()})('${langHead}',0,this.files[0])"></span></div></div></div>
 `);
-srtFileInput=true;
+      srtFileInput = true;
     }
 
   }, 700);

@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Vlive Multi
-// @version        0.1
+// @version        0.2
 // @description    Adds additional Vlive subtitles
 // @match          https://www.vlive.tv/*
 // @grant          none
@@ -37,6 +37,7 @@
     class subtitles {
       loaded = false;
       lines = [];
+      segments = [];
       constructor(url, index) {
         this.url = url;
         this.index = index;
@@ -64,8 +65,19 @@
             while (true) {
               var index = pop();
               if (isNaN(index)) break;
-              this.lines.push({ start: popTime(), end: popTime(), index, html: pop() });
+              this.lines.push({ start: popTime(), end: popTime(), html: pop() });
             }
+
+            const perChunk = Math.floor(Math.sqrt(this.lines.length));
+            this.lines.forEach(({ start, end }, index) => {
+              const chunkIndex = Math.floor(index / perChunk);
+              const s = this.segments[chunkIndex];
+              if (s) {
+                s.start = Math.min(start, s.start);
+                s.end = Math.max(end, s.end);
+              }
+              else this.segments[chunkIndex] = { start, end, chunkStart: index, chunkEnd: index + perChunk };
+            })
           })
         }
       }
@@ -90,30 +102,33 @@
           const langClass = '.' + langHead + langIndex;
           const lineContainer = div(`${langClass}-line-container.${langHead}-lines-container`, caps);
 
-          const oldLines = new Set([...caps.querySelectorAll(langClass)].map(l => l.dataset.line));
+          const oldLines = new Map([...caps.querySelectorAll(langClass)].map(l => [l.dataset.line - 0, l]));
           const curTime = videoPlayer.getCurrentTime();
           if (sub.isChecked()) {
             sub.loadIfNeeded();
-            sub.lines.forEach(({ start, end, html, index }) => {
+            sub.segments.forEach(({ start, end, chunkStart, chunkEnd }) => {
               if (start <= curTime && curTime < end)
-                if (!oldLines.delete(index)) {
-                  const newLine = div(`.u_rmc_caption_txt.subt-font-2.subt-color-white${langClass}${langClass}-line${index}`, lineContainer);
-                  newLine.dataset.line = index;
-                  newLine.innerHTML = html;
+                for (let index = chunkStart; index < chunkEnd; index++) {
+                  const { start, end, html } = sub.lines[index];
+                  if (start <= curTime && curTime <= end)
+                    if (!oldLines.delete(index)) {
+                      const newLine = div(`.u_rmc_caption_txt.subt-font-2.subt-color-white${langClass}${langClass}-line${index}`, lineContainer);
+                      newLine.dataset.line = index;
+                      newLine.innerHTML = html;
+                    }
                 }
             })
           }
-          if (oldLines.size) caps.querySelectorAll([...oldLines].map(l => `${langClass}-line${l}`).join(',')).forEach(n => n.remove());
+          for (const n of oldLines.values()) n.remove();
         })
       }, 100);
-    }
-  }
+    }}
 
-  const bookmarkletAddress = `javascript:(${bookmarkletFunction.toString()})('${langHead}'),void(0)`;
+    const bookmarkletAddress = `javascript:(${bookmarkletFunction.toString()})('${langHead}'),void(0)`;
 
-  const style = bookmarkletFunction(0, 'style');
+    const style = bookmarkletFunction(0, 'style');
 
-  style(`.${langHead}`, document.body).innerHTML = `
+    style(`.${langHead}`, document.body).innerHTML = `
   .${langHead}-container {position: absolute;
   width: 100%;
   z-index: 130;
@@ -145,16 +160,16 @@
   .u_rmcplayer_video a.${langHead}::after {content:': OFF'}
   `;
 
-  const getButton = () => document.querySelector(`a.${langHead}`);
+    const getButton = () => document.querySelector(`a.${langHead}`);
 
-  const setButton = setInterval(function () {
+    const setButton = setInterval(function () {
 
-    const controls = document.querySelector('.u_rmc_controls_btn');
-    if (!controls) return;
+      const controls = document.querySelector('.u_rmc_controls_btn');
+      if (!controls) return;
 
-    if (!getButton()) {
-      controls.insertAdjacentHTML('afterbegin', `<a class=${langHead} style='position:relative;color:white;float:left;display:block'>Multi</a>`);
-      getButton().setAttribute('href', bookmarkletAddress);
-    }
-  }, 700)
-})()
+      if (!getButton()) {
+        controls.insertAdjacentHTML('afterbegin', `<a class=${langHead} style='position:relative;color:white;float:left;display:block'>Multi</a>`);
+        getButton().setAttribute('href', bookmarkletAddress);
+      }
+    }, 700)
+  }) ()

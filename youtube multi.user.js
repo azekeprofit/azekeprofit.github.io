@@ -85,7 +85,7 @@
             s.start = Math.min(start, s.start);
             s.end = Math.max(end, s.end);
           }
-          else this.segments[chunkIndex] = { start, end, chunkStart: index, chunkEnd: index + perChunk };
+          else this.segments[chunkIndex] = { start, end, chunkStart: index, chunkEnd: Math.min(index + perChunk, this.lines.length) };
         })
       }
     }
@@ -137,7 +137,7 @@
         return Promise.resolve();
       }
     }
-    
+
     const container = div('.ytp-caption-window-container', videoPlayer);
     const caps = div('.caption-window.ytp-caption-window-bottom.' + langHead, container);
 

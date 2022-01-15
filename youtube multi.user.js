@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Youtube Multi
-// @version        0.8
+// @version        0.9
 // @description    Adds additional Youtube subtitles
 // @match          https://www.youtube.com/*
 // @grant          none
@@ -11,7 +11,7 @@
   const langHead = 'youtube-multi-lang';
 
   function bookmarkletFunction(langHead, optionalTag, srtFilesObj) {
-
+    
     function tag(name) {
       return function (classes, parent, insertBefore) {
         let el = parent.querySelector(classes);
@@ -57,8 +57,8 @@
       constructor(subId, checked, text, ...par) {
         const sub = getCurrentSubs();
         if (!sub.has(subId)) {
-          this.checkbox = label(`.${langHead}-checkbox.${langHead}${subId}.${langHead}-watch${getVideoId()}`, controls);
-          this.checkbox.innerHTML = `<input type=checkbox ${checked ? 'checked=checked' : ''}></input>${text}`;
+          (this.checkbox = label(`.${langHead}-checkbox.${langHead}${subId}.${langHead}-watch${getVideoId()}`, controls))
+          .innerHTML = `<input type=checkbox ${checked ? 'checked=checked' : ''}></input>${text}`;
 
           sub.set(subId, this);
           this.load(...par).then(() => this.partitionIntoSegments());
@@ -92,10 +92,9 @@
 
     class subtitles extends baseSubtitles {
       constructor(url, subId, moreThan1Subs) {
-        const split = subId.split('.');
-        const auto = split[0] == 'a';
+        const [auto, lang] = subId.split('.');
 
-        super(subId, !(auto && moreThan1Subs), split[1] + (auto ? ' (auto)' : ''), url);
+        super(lang, !(auto && moreThan1Subs), lang + (auto ? ' (auto)' : ''), url);
       }
 
       load(url) {
@@ -156,14 +155,14 @@
 
             if (sub.isChecked())
               sub.segments.forEach(({ start, end, chunkStart, chunkEnd }) => {
-                if (start <= curTime && curTime < end)
+                if (start <= curTime && curTime <= end)
                   for (let index = chunkStart; index < chunkEnd; index++) {
                     const { start, end, html } = sub.lines[index];
                     if (start <= curTime && curTime <= end)
                       if (!oldLines.delete(index)) {
                         const newLine = div(`.caption-visual-line${langClass}${langClass}-line${index}`, lineContainer);
                         newLine.dataset.line = index;
-                        div('.ytp-caption-segment', newLine).innerHTML = html;
+                        div('.bg', div('.ytp-caption-segment', newLine)).innerHTML = html;
                       }
                   }
               });
@@ -245,7 +244,8 @@ button.ytp-subtitles-button.${langHead} { display:none }
 #movie_player.${langHead}-error .${langHead}-toggle { display: none }
 
 .caption-window.${langHead} { bottom: 2%; left: 25%; right: 25%; text-align: center; font-size: 21.3333px; color: rgba(255, 255, 255,0.5); font-family: "YouTube Noto", Roboto, "Arial Unicode Ms", Arial, Helvetica, Verdana, "PT Sans Caption", sans-serif; }
-.caption-window.${langHead} .captions-text {display: inline-block; background: rgba(8, 8, 8, 0.75); fill: rgb(255, 255, 255); }
+.caption-window.${langHead} .captions-text {display:inline;}
+.caption-window.${langHead} .captions-text .bg {display:inline-block; background: rgba(8, 8, 8, 0.75); fill: rgb(255, 255, 255); }
 `;
       }
     }

@@ -11,7 +11,7 @@
   const langHead = 'youtube-multi-lang';
 
   function bookmarkletFunction(langHead, optionalTag, srtFilesObj) {
-    
+
     function tag(name) {
       return function (classes, parent, insertBefore) {
         let el = parent.querySelector(classes);
@@ -58,7 +58,7 @@
         const sub = getCurrentSubs();
         if (!sub.has(subId)) {
           (this.checkbox = label(`.${langHead}-checkbox.${langHead}${subId}.${langHead}-watch${getVideoId()}`, controls))
-          .innerHTML = `<input type=checkbox ${checked ? 'checked=checked' : ''}></input>${text}`;
+            .innerHTML = `<input type=checkbox ${checked ? 'checked=checked' : ''}></input>${text}`;
 
           sub.set(subId, this);
           this.load(...par).then(() => this.partitionIntoSegments());
@@ -137,13 +137,11 @@
       }
     }
 
-    const container = div('.ytp-caption-window-container', videoPlayer);
-    const caps = div('.caption-window.ytp-caption-window-bottom.' + langHead, container);
+    let lines;
 
     function activateCaptions() {
       if (!window.youtubeMultiLangCaptionsIntervalCode)
         window.youtubeMultiLangCaptionsIntervalCode = setInterval(() => {
-          const lines = div('.captions-text', caps);
 
           getCurrentSubs().forEach((sub, subId) => {
             const langClass = '.' + langHead + subId;
@@ -196,12 +194,14 @@
 
     function stateChange(e) {
       if (e === -1) {
-        caps.innerHTML = '';
-
         const captionTracks = videoPlayer.getPlayerResponse()?.captions?.playerCaptionsTracklistRenderer?.captionTracks || [];
         captionTracks.forEach(({ baseUrl, vssId }) => new subtitles(baseUrl, vssId, captionTracks.length > 1));
         youtubeCaps.forEach((allSubs, vId) => allSubs.forEach(sub => sub.showHideCheckbox(vId == getVideoId())));
         multiLangButton.style.display = getCurrentSubs().size > 0 ? 'inline-block' : 'none';
+
+        const bottom = div('.caption-window.ytp-caption-window-bottom.' + langHead, div('.ytp-caption-window-container', videoPlayer));
+        lines = div('.captions-text', bottom);
+        lines.innerHTML = '';
       }
     }
 

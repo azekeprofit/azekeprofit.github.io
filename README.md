@@ -21,6 +21,8 @@ Here are some of the videos with mutliple subtitles i tested it on:
 
 * [도시로 간 처녀(1981) The Maiden Who Went to the City](https://www.youtube.com/watch?v=QHSN2HJiLIQ) -- one of the many old films on Korean Classic Films Archive channel, has English and Korean subtitles.
 
+Additionally, script can also add custom subtitles to video by picking "Load .srt" option in Settings menu.
+
 Script is installed by drag and dropping [the file](youtube%20multi.user.js?raw=true) into "Extensions" tab of Chrome (Ctrl-Shift-E or "chrome:extensions" from address bar).
 
 ## Showing several language subtitles on VLIVE

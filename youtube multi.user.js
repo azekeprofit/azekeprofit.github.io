@@ -137,11 +137,15 @@
       }
     }
 
-    let lines;
-
     function activateCaptions() {
       if (!window.youtubeMultiLangCaptionsIntervalCode)
         window.youtubeMultiLangCaptionsIntervalCode = setInterval(() => {
+
+          const container = videoPlayer.querySelector('#ytp-caption-window-container.ytp-caption-window-container');
+          const bottom = div('.caption-window.ytp-caption-window-bottom.' + langHead, container);
+
+          if (!bottom.dataset.videoId || bottom.dataset.videoId != getVideoId()) { bottom.innerHTML = ''; bottom.dataset.videoId = getVideoId(); }
+          const lines = div('.captions-text', bottom);
 
           getCurrentSubs().forEach((sub, subId) => {
             const langClass = '.' + langHead + subId;
@@ -170,7 +174,6 @@
         }, 100);
 
       playerClasses.add(langHead);
-      multiLangButton.style.display = 'inline-block';
       multiLangButton.setAttribute('aria-pressed', 'true');
     }
 
@@ -198,10 +201,6 @@
         captionTracks.forEach(({ baseUrl, vssId }) => new subtitles(baseUrl, vssId, captionTracks.length > 1));
         youtubeCaps.forEach((allSubs, vId) => allSubs.forEach(sub => sub.showHideCheckbox(vId == getVideoId())));
         multiLangButton.style.display = getCurrentSubs().size > 0 ? 'inline-block' : 'none';
-
-        const bottom = div('.caption-window.ytp-caption-window-bottom.' + langHead, div('.ytp-caption-window-container', videoPlayer));
-        lines = div('.captions-text', bottom);
-        lines.innerHTML = '';
       }
     }
 
@@ -253,15 +252,13 @@ button.ytp-subtitles-button.${langHead} { display:none }
 
     const menu = document.querySelector(".ytp-popup.ytp-settings-menu .ytp-panel .ytp-panel-menu");
 
-    if (menu && !srtFileInput) {
-      menu.insertAdjacentHTML("afterbegin", `
+    if (menu && !srtFileInput)
+      menu.insertAdjacentHTML("afterbegin", srtFileInput = `
 <div class="ytp-menuitem ${langHead}-srtFileInput" aria-haspopup="true" role="menuitem" tabindex="0">
     <div class="ytp-menuitem-icon"></div>
     <div class="ytp-menuitem-label">Load .srt</div>
 <div class="ytp-menuitem-content"><div><span><input type="file" onchange="(${bookmarkletFunction.toString()})('${langHead}',0,this.files[0])"></span></div></div></div>
 `);
-      srtFileInput = true;
-    }
 
   }, 700);
 })()

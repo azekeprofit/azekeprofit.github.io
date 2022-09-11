@@ -75,4 +75,4 @@ Having written this first draft of the "triangles.htm" i've fallen into a rabbit
 * [Preact](preact%20triangles.htm)
 * [Preactz and Hooks](preactz%20hooks%20triangles.htm)
 * [React and Hooks](react%20hooks%20triangles.htm)
-* [Svelte App](https://svelte.dev/repl/1e5fea2ae76146f7a444bf551c0aee15)
+* [Svelte App](https://svelte.dev/repl/1e5fea2ae76146f7a444bf551c0aee15) -- REPL version more often than not gets ejected by "Infinite loop" safety, you can save the version locally and build it yourself or check out my compiled version [here](svelte%20triangles%20compiled.html)

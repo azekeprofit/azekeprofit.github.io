@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+	<title>The Witness Triangles puzzle solver on Svelte</title>
+<style>
+html, body {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	color: #333;
+	margin: 0;
+	padding: 8px;
+	box-sizing: border-box;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+a {
+	color: rgb(0,100,200);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:visited {
+	color: rgb(0,80,160);
+}
+
+label {
+	display: block;
+}
+
+input, button, select, textarea {
+	font-family: inherit;
+	font-size: inherit;
+	-webkit-padding: 0.4em 0;
+	padding: 0.4em;
+	margin: 0 0 0.5em 0;
+	box-sizing: border-box;
+	border: 1px solid #ccc;
+	border-radius: 2px;
+}
+
+input:disabled {
+	color: #ccc;
+}
+
+button {
+	color: #333;
+	background-color: #f4f4f4;
+	outline: none;
+}
+
+button:disabled {
+	color: #999;
+}
+
+button:not(:disabled):active {
+	background-color: #ddd;
+}
+
+button:focus {
+	border-color: #666;
+} 
+table.svelte-1jd4yw9{width:300px;height:300px
+}table.svelte-1jd4yw9{border-spacing:0;border-collapse:collapse}td.svelte-17no217.svelte-17no217{border-spacing:0;border-collapse:collapse}td.svelte-17no217.svelte-17no217{border:black 3px solid;text-align:center }td.svelte-17no217 button.svelte-17no217{background-color:white}td.x1.svelte-17no217 button.svelte-17no217:nth-of-type(1),td.x2.svelte-17no217 button.svelte-17no217:nth-of-type(2),td.x3.svelte-17no217 button.svelte-17no217:nth-of-type(3){background-color:yellow}td.left.svelte-17no217.svelte-17no217{border-left-color:red}td.up.svelte-17no217.svelte-17no217{border-top-color:red}td.down.svelte-17no217.svelte-17no217{border-bottom-color:red}td.right.svelte-17no217.svelte-17no217{border-right-color:red}
+</style>
+</head>
+<body>
+<script>
+var app=function(){"use strict";function t(){}function n(t){return t()}function e(){return Object.create(null)}function r(t){t.forEach(n)}function o(t){return"function"==typeof t}function c(t,n){return t!=t?n==n:t!==n||t&&"object"==typeof t||"function"==typeof t}function u(t,n){t.appendChild(n)}function l(t,n,e){t.insertBefore(n,e||null)}function s(t){t.parentNode.removeChild(t)}function i(t,n){for(let e=0;e<t.length;e+=1)t[e]&&t[e].d(n)}function f(t){return document.createElement(t)}function a(){return t=" ",document.createTextNode(t);var t}function d(t,n,e,r){return t.addEventListener(n,e,r),()=>t.removeEventListener(n,e,r)}function h(t,n,e){null==e?t.removeAttribute(n):t.getAttribute(n)!==e&&t.setAttribute(n,e)}let p;function g(t){p=t}const m=[],$=[],b=[],v=[],x=Promise.resolve();let y=!1;function _(t){b.push(t)}const k=new Set;let w=0;function E(){const t=p;do{for(;w<m.length;){const t=m[w];w++,g(t),C(t.$$)}for(g(null),m.length=0,w=0;$.length;)$.pop()();for(let t=0;t<b.length;t+=1){const n=b[t];k.has(n)||(k.add(n),n())}b.length=0}while(m.length);for(;v.length;)v.pop()();y=!1,k.clear(),g(t)}function C(t){if(null!==t.fragment){t.update(),r(t.before_update);const n=t.dirty;t.dirty=[-1],t.fragment&&t.fragment.p(t.ctx,n),t.after_update.forEach(_)}}const A=new Set;let O;function j(){O={r:0,c:[],p:O}}function N(){O.r||r(O.c),O=O.p}function S(t,n){t&&t.i&&(A.delete(t),t.i(n))}function q(t,n,e,r){if(t&&t.o){if(A.has(t))return;A.add(t),O.c.push((()=>{A.delete(t),r&&(e&&t.d(1),r())})),t.o(n)}else r&&r()}function B(t,e,c,u){const{fragment:l,on_mount:s,on_destroy:i,after_update:f}=t.$$;l&&l.m(e,c),u||_((()=>{const e=s.map(n).filter(o);i?i.push(...e):r(e),t.$$.on_mount=[]})),f.forEach(_)}function L(t,n){const e=t.$$;null!==e.fragment&&(r(e.on_destroy),e.fragment&&e.fragment.d(n),e.on_destroy=e.fragment=null,e.ctx=[])}function I(t,n){-1===t.$$.dirty[0]&&(m.push(t),y||(y=!0,x.then(E)),t.$$.dirty.fill(0)),t.$$.dirty[n/31|0]|=1<<n%31}function M(n,o,c,u,l,i,f,a=[-1]){const d=p;g(n);const h=n.$$={fragment:null,ctx:null,props:i,update:t,not_equal:l,bound:e(),on_mount:[],on_destroy:[],on_disconnect:[],before_update:[],after_update:[],context:new Map(o.context||(d?d.$$.context:[])),callbacks:e(),dirty:a,skip_bound:!1,root:o.target||d.$$.root};f&&f(h.root);let m=!1;if(h.ctx=c?c(n,o.props||{},((t,e,...r)=>{const o=r.length?r[0]:e;return h.ctx&&l(h.ctx[t],h.ctx[t]=o)&&(!h.skip_bound&&h.bound[t]&&h.bound[t](o),m&&I(n,t)),e})):[],h.update(),m=!0,r(h.before_update),h.fragment=!!u&&u(h.ctx),o.target){if(o.hydrate){const t=function(t){return Array.from(t.childNodes)}(o.target);h.fragment&&h.fragment.l(t),t.forEach(s)}else h.fragment&&h.fragment.c();o.intro&&S(n.$$.fragment),B(n,o.target,o.anchor,o.customElement),E()}g(d)}class P{$destroy(){L(this,1),this.$destroy=t}$on(t,n){const e=this.$$.callbacks[t]||(this.$$.callbacks[t]=[]);return e.push(n),()=>{const t=e.indexOf(n);-1!==t&&e.splice(t,1)}}$set(t){var n;this.$$set&&(n=t,0!==Object.keys(n).length)&&(this.$$.skip_bound=!0,this.$$set(t),this.$$.skip_bound=!1)}}function R(n){let e,o,c,i,p,g,m,$,b;return{c(){e=f("td"),o=f("button"),o.textContent="1",c=a(),i=f("button"),i.textContent="2",p=a(),g=f("button"),g.textContent="3",h(o,"class","svelte-17no217"),h(i,"class","svelte-17no217"),h(g,"class","svelte-17no217"),h(e,"class",m=n[1]+" x"+n[0]+" svelte-17no217")},m(t,r){l(t,e,r),u(e,o),u(e,c),u(e,i),u(e,p),u(e,g),$||(b=[d(o,"click",n[3]),d(i,"click",n[4]),d(g,"click",n[5])],$=!0)},p(t,[n]){3&n&&m!==(m=t[1]+" x"+t[0]+" svelte-17no217")&&h(e,"class",m)},i:t,o:t,d(t){t&&s(e),$=!1,r(b)}}}function T(t,n,e){let{borders:r=""}=n,{number:o=0}=n;function c(t){e(0,o=o==t?0:t)}return t.$$set=t=>{"borders"in t&&e(1,r=t.borders),"number"in t&&e(0,o=t.number)},[o,r,c,()=>c(1),()=>c(2),()=>c(3)]}class z extends P{constructor(t){super(),M(this,t,T,R,c,{borders:1,number:0})}}function D(t,n,e){const r=t.slice();return r[14]=n[e],r[15]=n,r[16]=e,r}function F(t,n,e){const r=t.slice();return r[17]=n[e],r[18]=n,r[19]=e,r}function G(t){let n,e,r;function o(n){t[3](n,t[17],t[14])}let c={borders:t[1][Z(t[17],t[14])]};return void 0!==t[0][Z(t[17],t[14])]&&(c.number=t[0][Z(t[17],t[14])]),n=new z({props:c}),$.push((()=>function(t,n,e){const r=t.$$.props[n];void 0!==r&&(t.$$.bound[r]=e,e(t.$$.ctx[r]))}(n,"number",o))),{c(){var t;(t=n.$$.fragment)&&t.c()},m(t,e){B(n,t,e),r=!0},p(r,o){t=r;const c={};var u;2&o&&(c.borders=t[1][Z(t[17],t[14])]),!e&&1&o&&(e=!0,c.number=t[0][Z(t[17],t[14])],u=()=>e=!1,v.push(u)),n.$set(c)},i(t){r||(S(n.$$.fragment,t),r=!0)},o(t){q(n.$$.fragment,t),r=!1},d(t){L(n,t)}}}function H(t){let n,e,r,o=X(W),c=[];for(let n=0;n<o.length;n+=1)c[n]=G(F(t,o,n));const d=t=>q(c[t],1,1,(()=>{c[t]=null}));return{c(){n=f("tr");for(let t=0;t<c.length;t+=1)c[t].c();e=a()},m(t,o){l(t,n,o);for(let t=0;t<c.length;t+=1)c[t].m(n,null);u(n,e),r=!0},p(t,r){if(3&r){let u;for(o=X(W),u=0;u<o.length;u+=1){const l=F(t,o,u);c[u]?(c[u].p(l,r),S(c[u],1)):(c[u]=G(l),c[u].c(),S(c[u],1),c[u].m(n,e))}for(j(),u=o.length;u<c.length;u+=1)d(u);N()}},i(t){if(!r){for(let t=0;t<o.length;t+=1)S(c[t]);r=!0}},o(t){c=c.filter(Boolean);for(let t=0;t<c.length;t+=1)q(c[t]);r=!1},d(t){t&&s(n),i(c,t)}}}function J(t){let n,e,r,o,c,u,p,g,m=Y(W),$=[];for(let n=0;n<m.length;n+=1)$[n]=H(D(t,m,n));const b=t=>q($[t],1,1,(()=>{$[t]=null}));return{c(){n=f("p"),n.textContent="Numbers inside squares determine number of borders touched on by line that goes from bottom left to up right corner.",e=a(),r=f("table");for(let t=0;t<$.length;t+=1)$[t].c();o=a(),c=f("button"),c.textContent="Solve",h(r,"class","svelte-1jd4yw9")},m(s,i){l(s,n,i),l(s,e,i),l(s,r,i);for(let t=0;t<$.length;t+=1)$[t].m(r,null);l(s,o,i),l(s,c,i),u=!0,p||(g=d(c,"click",t[2]),p=!0)},p(t,[n]){if(3&n){let e;for(m=Y(W),e=0;e<m.length;e+=1){const o=D(t,m,e);$[e]?($[e].p(o,n),S($[e],1)):($[e]=H(o),$[e].c(),S($[e],1),$[e].m(r,null))}for(j(),e=m.length;e<$.length;e+=1)b(e);N()}},i(t){if(!u){for(let t=0;t<m.length;t+=1)S($[t]);u=!0}},o(t){$=$.filter(Boolean);for(let t=0;t<$.length;t+=1)q($[t]);u=!1},d(t){t&&s(n),t&&s(e),t&&s(r),i($,t),t&&s(o),t&&s(c),p=!1,g()}}}const K="0",Q="1",U="2",V="3",W=4;function X(t){return[...Array(t).keys()]}function Y(t){return X(t).reverse()}function Z(t,n){return t+""+n}function tt(t,n){return t[n]==V?tt(t,n-1):t.substring(0,n)+(parseInt(t[n])+1)+"".padStart(t.length-n-1,"0")}function nt(t,n,e){let r={},o={},c="";function u(t){return c.indexOf(t)>=0}function l(t){let n=-1,e=" 00",r=0,o=0;for(;t[++n];){switch(t[n]){case V:r--;break;case Q:r++;break;case U:o--;break;case K:o++}e+=" "+r+o}c=e+" "}function s(t,n,e){var r=t,o=n;return e==V&&o++,e==Q&&(t++,r++,o++),e==U&&r++,e==K&&(n++,o++,r++),function(t,n,e,r){var o=Z(t,n),c=Z(e,r);return u(" "+o+" "+c+" ")||u(" "+c+" "+o+" ")}(t,n,r,o)}function i(){return Y(W).map((t=>X(W).map((n=>{e(1,o[Z(n,t)]=function(t,n){var e="";return s(t,n,V)&&(e+=" left"),s(t,n,Q)&&(e+=" right"),s(t,n,K)&&(e+=" up"),s(t,n,U)&&(e+=" down"),e}(n,t),o)}))))}function f(){for(var t=c.match(/ [\-0-9]+/g),n=0;t[++n];){var e=t[n];if(e==" "+Z(W,W))return Y(W).every((t=>X(W).every((n=>{var e=r[Z(n,t)];if(!e)return!0;var o=0;return s(n,t,V)&&o++,s(n,t,Q)&&o++,s(n,t,K)&&o++,s(n,t,U)&&o++,e==o}))))?0:n;if(new RegExp(`[${W+1}-]`).test(e))return n;if(t.slice(0,n).indexOf(e)>=0)return n;t[n]=e}return 0}return[r,o,function(){var t,n="000000000000000000000000000";for(l(n);t=f();)l(n=tt(n,t-1));i()},function(n,o,c){t.$$.not_equal(r[Z(o,c)],n)&&(r[Z(o,c)]=n,e(0,r))}]}return new class extends P{constructor(t){super(),M(this,t,nt,J,c,{})}}({target:document.body})}();
+</script>
+</body>
+</html>

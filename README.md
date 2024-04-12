@@ -2,20 +2,13 @@
 
 Having been a professional developer for two decades, outside of work i wrote various scripts and tools for my hobbies. Having an ability to make a program that can do things to a document/file or to a another webpage is increasingly useful and time-saving.
 
-## How to install these scripts
-
-These scripts are mostly meant for personal use. They're meant to be installed by just drag-and-dropping downloaded ".user.js" files into "Extensions" panel of Chrome but people reported that Greasemonkey also works for Firefox. 
-
-[More detailed instructions](https://stackapps.com/tags/script/info) on how to install these scripts on StackApps.
-
-
 # Language learning
 ## Showing several language subtitles on Youtube
-[Youtube Multi](youtube%20multi.user.js?raw=true) replaces default "CC/Subtitles" button on Youtube with my own that can show multiple language captions on at the same time, provided video has them:
+[Youtube Multi](https://chromewebstore.google.com/detail/youtube-multi-captions/mlkecnkjoepkpihbgdbglelggneafihm) is a Chrome browser extension that replaces "CC/Subtitles" button on Youtube with my own that shows multiple language captions on at the same time (provided video has them):
 
 ![screenshot of Youtube Multi](youtube%20multi.jpg)
 
-Here are some of the videos with mutliple subtitles i tested it on:
+Here are some of the videos with multiple subtitles i tested it on:
 
 * [Past, present and future tenses of "Go" in Kazakh](https://www.youtube.com/watch?v=xRJKt67K4BA) -- has English, Kazakh, Korean (and an auto-generated Russian track but script disables those unless it's the only subtitle available)
 
@@ -23,7 +16,14 @@ Here are some of the videos with mutliple subtitles i tested it on:
 
 Additionally, script can also add custom subtitles to video by picking "Load .srt" option in Settings menu.
 
-Script is installed by drag and dropping [the file](youtube%20multi.user.js?raw=true) into "Extensions" tab of Chrome (Ctrl-Shift-E or "chrome:extensions" from address bar).
+Youtube Multi originally was a UserScript [file](https://azekeprofit.github.io/youtube%20multi.user.js?raw=true), but i've since rewrote it and published as Chrome Extension. Source code for the extension is published [on its own repo](https://github.com/azekeprofit/youtube-multi).
+
+
+## UserScripts
+
+ Other scripts remain as UserScripts, mostly meant for personal use. UserScripts can be installed by just drag-and-dropping downloaded ".user.js" files into "Extensions" panel of Chrome but people reported that Greasemonkey also works for Firefox. 
+
+[More detailed instructions](https://stackapps.com/tags/script/info) on how to install these scripts on StackApps.
 
 ## Showing several language subtitles on VLIVE
 

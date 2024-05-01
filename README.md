@@ -79,11 +79,11 @@ Having written this first draft of the "triangles.htm" i've fallen into a rabbit
 
 ## Recreating various puzzles
 
-General interest in puzzles also applies to actual puzzles like the ones in [LOK puzzle book](https://www.blazgracar.com/lok). I tried to write my [own implementation in SolidJS](https://github.com/azekeprofit/lok-solidjs) but stopped halfway due to waning interest and author of the book developing fuly-fledged official videogame.
+General interest in puzzles also applies to actual puzzles like the ones in [LOK puzzle book](https://www.blazgracar.com/lok). I tried to write my [own implementation in SolidJS](https://azekeprofit.github.io/lok-solidjs/) ([source code](https://github.com/azekeprofit/lok-solidjs)) but stopped halfway due to waning interest and author of the book developing fuly-fledged official videogame.
 
 Another passion of mine are Korean variety shows that feature elaborate board and card games. While 2014's [The Genius](https://baechusquad.download/the_genius/) is still the best show of this kind, the producer has since made a number of other shows, including recent [Devil's Plan for Netflix](https://www.netflix.com/title/81653386). One of many puzzles games featured on the show was "Hexagon" -- a competitive math and memory game for two players:
 
-[Here it is written in SolidJS, supports both single and two-player mode](hexagon%20compiled.htm) ([the source](https://github.com/azekeprofit/hexagon-solidjs))
+[Here it is written in SolidJS, supports both single and two-player mode](https://azekeprofit.github.io/hexagon-solidjs/) ([the source](https://github.com/azekeprofit/hexagon-solidjs))
 
 I also want to note that "Monorail" -- a game from "The Genius", was also an [object of research](https://chaosatthesky.wordpress.com/2014/12/08/the-genius-by-a-skymins-mind-7/) before and was even implemented as a game here:
 

@@ -1,4 +1,4 @@
-[GitHub profile](https://github.com/azekeprofit)
+<a href="https://github.com/azekeprofit"><img src="github.svg" alt="Github logo" style="width:1em"/> GitHub profile</a>
 
 # Scripting
 
